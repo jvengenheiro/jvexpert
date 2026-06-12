@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Alertas e Metas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #f093fb, #f5576c, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        /* CALENDÁRIO */
+        .calendar-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .calendar-header h2 {
+            font-size: 1.5rem;
+            color: #f5576c;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: rgba(245, 87, 108, 0.4);
+            border-color: #f5576c;
+        }
+
+        .days-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #aaa;
+            padding: 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 55px;
+            padding: 5px;
+        }
+
+        .day-cell:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .day-cell.empty {
+            cursor: default;
+        }
+
+        .day-cell.today {
+            background: linear-gradient(135deg, rgba(245, 87, 108, 0.3), rgba(79, 172, 254, 0.3));
+            border-color: #f5576c;
+        }
+
+        .day-cell.selected {
+            background: linear-gradient(135deg, #f5576c, #4facfe);
+            border-color: transparent;
+        }
+
+        .day-cell.has-alert::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #ffd700;
+            border-radius: 50%;
+        }
+
+        .day-cell.has-goal::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 8px;
+            height: 8px;
+            background: #00e676;
+            border-radius: 50%;
+        }
+
+        .day-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .day-dots {
+            display: flex;
+            gap: 2px;
+            margin-top: 3px;
+        }
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .dot.alert { background: #ffd700; }
+        .dot.goal { background: #00e676; }
+
+        /* PAINEL LATERAL */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* METAS */
+        .goals-section, .alerts-section, .add-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .section-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .icon-goal { background: rgba(0, 230, 118, 0.2); }
+        .icon-alert { background: rgba(255, 215, 0, 0.2); }
+        .icon-add { background: rgba(79, 172, 254, 0.2); }
+
+        /* FORMULÁRIO */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #4facfe;
+        }
+
+        .form-group select option {
+            background: #302b63;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .type-btn.active-alert {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .type-btn.active-goal {
+            background: rgba(0, 230, 118, 0.2);
+            border-color: #00e676;
+            color: #00e676;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f5576c, #4facfe);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+
+        .add-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* LISTA DE ITENS */
+        .items-list {
+            max-height: 220px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+
+        .item-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .item-card:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .item-card.alert-card { border-left-color: #ffd700; }
+        .item-card.goal-card { border-left-color: #00e676; }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .item-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            flex: 1;
+            padding-right: 8px;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .delete-btn:hover {
+            color: #f5576c;
+        }
+
+        .item-meta {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .item-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+
+        .tag-alert { background: rgba(255,215,0,0.2); color: #ffd700; }
+        .tag-goal { background: rgba(0,230,118,0.2); color: #00e676; }
+
+        /* PROGRESSO DAS METAS */
+        .goal-progress {
+            margin-top: 6px;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00e676, #69f0ae);
+            transition: width 0.5s ease;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* NOTIFICAÇÃO */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #302b63, #24243e);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px 20px;
+            z-index: 2000;
+            transform: translateX(200%);
+            transition: transform 0.4s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { border-left: 3px solid #00e676; }
+        .notification.error { border-left: 3px solid #f5576c; }
+        .notification.info { border-left: 3px solid #4facfe; }
+
+        .notif-text {
+            font-size: 0.85rem;
+        }
+
+        /* LEGENDA */
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* STATS */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f5576c, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            header h1 { font-size: 1.8rem; }
+            .day-cell { min-height: 42px; }
+            .day-number { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📅 CalendarMeta</h1>
+        <p>Organize seus alertas e conquiste suas metas</p>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-number" id="stat-goals">0</div>
+            <div class="stat-label">Metas Ativas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-alerts">0</div>
+            <div class="stat-label">Alertas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-today">0</div>
+            <div class="stat-label">Hoje</div>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <!-- CALENDÁRIO -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+                <h2 id="current-month">Junho 2025</h2>
+                <button class="nav-btn" onclick="changeMonth(1)">›</button>
+            </div>
+
+            <div class="days-header">
+                <div class="day-name">Dom</div>
+                <div class="day-name">Seg</div>
+                <div class="day-name">Ter</div>
+                <div class="day-name">Qua</div>
+                <div class="day-name">Qui</div>
+                <div class="day-name">Sex</div>
+                <div class="day-name">Sáb</div>
+            </div>
+
+            <div class="days-grid" id="days-grid"></div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#ffd700"></div>
+                    Alerta
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#00e676"></div>
+                    Meta
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#f5576c"></div>
+                    Hoje
+                </div>
+            </div>
+        </div>
+
+        <!-- PAINEL LATERAL -->
+        <div class="side-panel">
+
+            <!-- ADICIONAR -->
+            <div class="add-section">
+                <div class="section-title">
+                    <div class="section-icon icon-add">➕</div>
+                    Novo Item
+                </div>
+
+                <div class="type-selector">
+                    <button class="type-btn active-alert" id="btn-alert-type" onclick="selectType('alert')">🔔 Alerta</button>
+                    <button class="type-btn" id="btn-goal-type" onclick="selectType('goal')">🎯 Meta</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Título *</label>
+                    <input type="text" id="item-title" placeholder="Ex: Reunião de equipe" maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label>Data *</label>
+                    <input type="date" id="item-date">
+                </div>
+
+                <div class="form-group" id="time-group">
+                    <label>Horário</label>
+                    <input type="time" id="item-time">
+                </div>
+
+                <div class="form-group" id="category-group">
+                    <label>Categoria</label>
+                    <select id="item-category">
+                        <option value="pessoal">🏠 Pessoal</option>
+                        <option value="trabalho">💼 Trabalho</option>
+                        <option value="saude">❤️ Saúde</option>
+                        <option value="financeiro">💰 Financeiro</option>
+                        <option value="educacao">📚 Educação</option>
+                        <option value="outro">⭐ Outro</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="progress-group" style="display:none">
+                    <label>Progresso Inicial (%)</label>
+                    <input type="number" id="item-progress" placeholder="0" min="0" max="100" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Notas</label>
+                    <textarea id="item-notes" placeholder="Adicione uma descrição..."></textarea>
+                </div>
+
+                <button class="add-btn" onclick="addItem()">+ Adicionar</button>
+            </div>
+
+            <!-- ALERTAS -->
+            <div class="alerts-section">
+                <div class="section-title">
+                    <div class="section-icon icon-alert">🔔</div>
+                    Alertas Recentes
+                </div>
+                <div class="items-list" id="alerts-list">
+                    <div style="text-align:center;color:#aaa;font-size:0.8rem;padding:20px 0">
+                        Nenhum alerta cadastrado
+                    </div>
+                </div>
+            </div>
+
+            <!-- METAS -->
+            <div class="goals-section">
+                <div class="section-title">
+                    <div class="section-icon icon-goal">🎯</div>
+                    Metas
+                </div>
+                <div class="items-list" id="goals-list">
+                    <div style="text-align:center;color:#aaa;font-size:0.8rem;padding:20px 0">
+                        Nenhuma meta cadastrada
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Eventos do dia</div>
+            <button class="modal-close" onclick="closeModalDirect()">×</button>
+        </div>
+        <div class="modal-items" id="modal-items"></div>
+    </div>
+</div>
+
+<!-- NOTIFICAÇÃO -->
+<div class="notification" id="notification">
+    <div class="notif-text" id="notif-text"></div>
+</div>
+
+<script>
+    // Estado
+    let currentDate = new Date();
+    let selectedType = 'alert';
+    let items = JSON.parse(localStorage.getItem('calendarItems')) || [];
+
+    const months = [
+        'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+        'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
+    ];
+
+    const categoryEmojis = {
+        pessoal: '🏠', trabalho: '💼', saude: '❤️',
+        financeiro: '💰', educacao: '📚', outro: '⭐'
+    };
+
+    // Inicialização
+    const today = new Date();
+    document.getElementById('item-date').value = today.toISOString().split('T')[0];
+
+    function init() {
+        renderCalendar();
+        renderLists();
+        updateStats();
+    }
+
+    function selectType(type) {
+        selectedType = type;
+        const btnAlert = document.getElementById('btn-alert-type');
+        const btnGoal = document.getElementById('btn-goal-type');
+        const progressGroup = document.getElementById('progress-group');
+
+        btnAlert.className = 'type-btn';
+        btnGoal.className = 'type-btn';
+
+        if (type === 'alert') {
+            btnAlert.className = 'type-btn active-alert';
+            progressGroup.style.display = 'none';
+        } else {
+            btnGoal.className = 'type-btn active-goal';
+            progressGroup.style.display = 'block';
+        }
+    }
+
+    function changeMonth(dir) {
+        currentDate.setMonth(currentDate.getMonth() + dir);
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        document.getElementById('current-month').textContent = `${months[month]} ${year}`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const grid = document.getElementById('days-grid');
+        grid.innerHTML = '';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        // Células vazias
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'day-cell empty';
+            grid.appendChild(empty);
+        }
+
+        // Dias
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const dayItems = items.filter(it => it.date === dateStr);
+            const hasAlert = dayItems.some(it => it.type === 'alert');
+            const hasGoal = dayItems.some(it => it.type === 'goal');
+
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            if (dateStr === todayStr) cell.classList.add('today');
+            if (hasAlert) cell.classList.add('has-alert');
+            if (hasGoal) cell.classList.add('has-goal');
+
+            const num = document.createElement('div');
+            num.className = 'day-number';
+            num.textContent = d;
+            cell.appendChild(num);
+
+            if (dayItems.length > 0) {
+                const dots = document.createElement('div');
+                dots.className = 'day-dots';
+                dayItems.slice(0, 3).forEach(item => {
+                    const dot = document.createElement('div');
+                    dot.className = `dot ${item.type}`;
+                    dots.appendChild(dot);
+                });
+                cell.appendChild(dots);
+            }
+
+            cell.onclick = () => {
+                if (dayItems.length > 0) openModal(dateStr, dayItems, d);
+                else {
+                    document.getElementById('item-date').value = dateStr;
+                    showNotification('Data selecionada: ' + formatDate(dateStr), 'info');
+                }
+            };
+
+            grid.appendChild(cell);
+        }
+    }
+
+    function renderLists() {
+        renderAlerts();
+        renderGoals();
+    }
+
+    function renderAlerts() {
+        const list = document.getElementById('alerts-list');
+        const alerts = items
+            .filter(it => it.type === 'alert')
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        if (alerts.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:#aaa;font-size:0.8rem;padding:20px 0">Nenhum alerta cadastrado</div>';
+            return;
+        }
+
+        list.innerHTML = alerts.map(item => `
+            <div class="item-card alert-card">
+                <div class="item-header">
+                    <div class="item-title">${categoryEmojis[item.category] || '⭐'} ${item.title}</div>
+                    <button class="delete-btn" onclick="deleteItem('${item.id}')">✕</button>
+                </div>
+                <div class="item-meta">📅 ${formatDate(item.date)}${item.time ? ' às ' + item.time : ''}</div>
+                ${item.notes ? `<div class="item-meta" style="margin-top:4px">📝 ${item.notes}</div>` : ''}
+                <span class="item-tag tag-alert">🔔 Alerta</span>
+            </div>
+        `).join('');
+    }
+
+    function renderGoals() {
+        const list = document.getElementById('goals-list');
+        const goals = items
+            .filter(it => it.type === 'goal')
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        if (goals.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:#aaa;font-size:0.8rem;padding:20px 0">Nenhuma meta cadastrada</div>';
+            return;
+        }
+
+        list.innerHTML = goals.map(item => `
+            <div class="item-card goal-card">
+                <div class="item-header">
+                    <div class="item-title">${categoryEmojis[item.category] || '⭐'} ${item.title}</div>
+                    <button class="delete-btn" onclick="deleteItem('${item.id}')">✕</button>
+                </div>
+                <div class="item-meta">🗓️ Prazo: ${formatDate(item.date)}</div>
+                <div class="goal-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:${item.progress || 0}%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Progresso</span>
+                        <span>${item.progress || 0}%</span>
+                    </div>
+                </div>
+                <div style="margin-top:8px">
+                    <input type="range" min="0" max="100" value="${item.progress || 0}"
+                        style="width:100%;cursor:pointer;accent-color:#00e676"
+                        onchange="updateProgress('${item.id}', this.value)">
+                </div>
+                <span class="item-tag tag-goal">🎯 Meta</span>
+            </div>
+        `).join('');
+    }
+
+    function updateProgress(id, value) {
+        const item = items.find(it => it.id === id);
+        if (item) {
+            item.progress = parseInt(value);
+            saveItems();
+            renderGoals();
+            if (item.progress === 100) {
+                showNotification(`🎉 Meta "${item.title}" concluída!`, 'success');
+            }
+        }
+    }
+
+    function addItem() {
+        const title = document.getElementById('item-title').value.trim();
+        const date = document.getElementById('item-date').value;
+        const time = document.getElementById('item-time').value;
+        const category = document.getElementById('item-category').value;
+        const notes = document.getElementById('item-notes').value.trim();
+        const progress = parseInt(document.getElementById('item-progress').value) || 0;
+
+        if (!title) { showNotification('Por favor, adicione um título.', 'error'); return; }
+        if (!date) { showNotification('Por favor, selecione uma data.', 'error'); return; }
+
+        const newItem = {
+            id: Date.now().toString(),
+            type: selectedType,
+            title,
+            date,
+            time,
+            category,
+            notes,
+            progress: selectedType === 'goal' ? progress : 0,
+            createdAt: new Date().toISOString()
+        };
+
+        items.push(newItem);
+        saveItems();
+
+        // Limpar formulário
+        document.getElementById('item-title').value = '';
+        document.getElementById('item-notes').value = '';
+        document.getElementById('item-time').value = '';
+        document.getElementById('item-progress').value = 0;
+
+        renderCalendar();
+        renderLists();
+        updateStats();
+
+        const typeLabel = selectedType === 'alert' ? 'Alerta' : 'Meta';
+        showNotification(`✅ ${typeLabel} "${title}" adicionado!`, 'success');
+    }
+
+    function deleteItem(id) {
+        const item = items.find(it => it.id === id);
+        items = items.filter(it => it.id !== id);
+        saveItems();
+        renderCalendar();
+        renderLists();
+        updateStats();
+        if (item) showNotification(`🗑️ "${item.title}" removido.`, 'info');
+    }
+
+    function openModal(dateStr, dayItems, day) {
+        document.getElementById('modal-title').textContent = `📅 ${day} de ${months[currentDate.getMonth()]}`;
+        const container = document.getElementById('modal-items');
+
+        container.innerHTML = dayItems.map(item => `
+            <div class="item-card ${item.type}-card">
+                <div class="item-header">
+                    <div class="item-title">${categoryEmojis[item.category] || '⭐'} ${item.title}</div>
+                    <button class="delete-btn" onclick="deleteItem('${item.id}');closeModalDirect()">✕</button>
+                </div>
+                <div class="item-meta">${item.time ? '⏰ ' + item.time : '📅 Dia inteiro'}</div>
+                ${item.notes ? `<div class="item-meta">📝 ${item.notes}</div>` : ''}
+                ${item.type === 'goal' ? `
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:${item.progress || 0}%"></div>
+                        </div>
+                        <div class="progress-label"><span>Progresso</span><span>${item.progress || 0}%</span></div>
+                    </div>
+                ` : ''}
+                <span class="item-tag ${item.type === 'alert' ? 'tag-alert' : 'tag-goal'}">
+                    ${item.type === 'alert' ? '🔔 Alerta' : '🎯 Meta'}
+                </span>
+            </div>
+        `).join('');
+
+        document.getElementById('modal-overlay').classList.add('show');
+    }
+
+    function closeModal(e) {
+        if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+    }
+
+    function closeModalDirect() {
+        document.getElementById('modal-overlay').classList.remove('show');
+    }
+
+    function updateStats() {
+        const goals = items.filter(it => it.type === 'goal').length;
+        const alerts = items.filter(it => it.type === 'alert').length;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayItems = items.filter(it => it.date === todayStr).length;
+
+        document.getElementById('stat-goals').textContent = goals;
+        document.getElementById('stat-alerts').textContent = alerts;
+        document.getElementById('stat-today').textContent = todayItems;
+    }
+
+    function saveItems() {
+        localStorage.setItem('calendarItems', JSON.stringify(items));
+    }
+
+    function formatDate(dateStr) {
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+
+    function showNotification(text, type = 'info') {
+        const notif = document.getElementById('notification');
+        const notifText = document.getElementById('notif-text');
+        notif.className = `notification ${type}`;
+        notifText.textContent = text;
+        notif.classList.add('show');
+        setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    // Verificar alertas do dia ao carregar
+    function checkTodayAlerts() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayAlerts = items.filter(it => it.date === todayStr && it.type === 'alert');
+        if (todayAlerts.length > 0) {
+            setTimeout(() => {
+                showNotification(`🔔 Você tem ${todayAlerts.length} alerta(s) para hoje!`, 'info');
+            }, 1000);
+        }
+    }
+
+    init();
+    checkTodayAlerts();
+</script>
+
+</body>
+</html>
