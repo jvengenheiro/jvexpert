@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/"
+  to = "/calendar-alertas-metas.html"
+  status = 200
