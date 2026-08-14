@@ -26,7 +26,7 @@
 
 <div class="card p-4 mb-4">
   <h2 class="h5">Gerar nova escala</h2>
-  <p class="text-muted">Escolha o período e o sistema vai alocar instrutores nos cursos fixos e livres do intervalo, respeitando qualificação, disponibilidade e evitando conflitos de horário.</p>
+  <p class="text-muted">Escolha o período e o sistema vai expandir e alocar instrutores nos cursos fixos do intervalo, respeitando qualificação, disponibilidade e evitando conflitos de horário. Cursos livres são anexados depois, na tela da escala.</p>
   <form method="post" action="{{ url_for('escala.gerar') }}" class="row g-3 align-items-end">
     <div class="col-auto">
       <label class="form-label">Data início</label>

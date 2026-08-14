@@ -5,12 +5,17 @@ Sistema web para gerar a escala de instrutores, considerando dois tipos de curso
 - **Cursos fixos**: grade curricular recorrente (mesmo dia da semana e horário, ao longo de um período).
 - **Cursos livres**: turmas avulsas, com data específica, abertas sob demanda.
 
-O sistema aloca instrutores automaticamente respeitando:
+Ao gerar uma escala para um período, os **cursos fixos** são expandidos automaticamente (uma sessão para
+cada ocorrência semanal dentro do período). Os **cursos livres** não entram automaticamente — como são
+turmas avulsas abertas sob demanda, você os anexa manualmente à escala pelo botão **"Anexar curso livre"**
+na tela da escala, escolhendo entre os que já estão cadastrados.
+
+Em ambos os casos, o sistema aloca instrutor automaticamente respeitando:
 
 - **Qualificação**: só recebe cursos das categorias em que está habilitado.
 - **Disponibilidade**: janelas semanais recorrentes cadastradas (opcional — sem cadastro, considera-se disponível sempre) e bloqueios pontuais (férias, folgas, atestados).
 - **Conflito de horário**: um instrutor nunca é escalado em dois cursos que se sobrepõem.
-- **Balanceamento de carga**: prioriza sempre o instrutor elegível com menor carga horária já alocada no período; respeita um limite máximo de horas/semana quando definido.
+- **Balanceamento de carga**: prioriza sempre o instrutor elegível com menor carga horária já alocada na escala; respeita um limite máximo de horas/semana quando definido.
 - **Instrutor titular**: um curso fixo pode ter um instrutor titular pré-definido, priorizado sempre que disponível.
 
 Depois de gerada, a escala pode ser ajustada manualmente sessão a sessão e exportada em CSV.
@@ -30,9 +35,10 @@ Acesse http://localhost:5000. O banco (SQLite) é criado automaticamente em `ins
 
 1. Cadastre os **instrutores** (nome, qualificações, disponibilidade, bloqueios) — manualmente ou importando uma planilha.
 2. Cadastre os **cursos fixos** e **cursos livres**.
-3. No painel, escolha um período e clique em **Gerar escala**.
-4. Revise a escala: sessões sem instrutor elegível ficam marcadas em vermelho e podem ser atribuídas manualmente.
-5. Exporte a escala em CSV se necessário.
+3. No painel, escolha um período e clique em **Gerar escala** — os cursos fixos do período entram automaticamente.
+4. Na tela da escala, use **Anexar curso livre** para incluir os cursos livres cadastrados que fazem parte dessa escala.
+5. Revise a escala: sessões sem instrutor elegível ficam marcadas em vermelho e podem ser atribuídas manualmente.
+6. Exporte a escala em CSV se necessário.
 
 ## Importação de dados (ex: a partir do SIGOP)
 

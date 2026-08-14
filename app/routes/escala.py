@@ -4,8 +4,8 @@ from datetime import datetime
 
 from flask import Blueprint, Response, flash, redirect, render_template, request, url_for
 
-from app.models import DIAS_SEMANA, Escala, Instrutor, Sessao, db
-from app.scheduler import gerar_escala
+from app.models import DIAS_SEMANA, CursoLivre, Escala, Instrutor, Sessao, db
+from app.scheduler import anexar_curso_livre, gerar_escala
 
 bp = Blueprint("escala", __name__, url_prefix="/escala")
 
@@ -59,6 +59,13 @@ def ver(escala_id):
             chave = sessao.instrutor.nome
             horas_por_instrutor[chave] = horas_por_instrutor.get(chave, 0) + horas
 
+    ids_ja_anexados = {s.curso_livre_id for s in escala.sessoes if s.curso_livre_id}
+    cursos_livres_disponiveis = (
+        CursoLivre.query.filter(~CursoLivre.id.in_(ids_ja_anexados)).order_by(CursoLivre.data).all()
+        if ids_ja_anexados
+        else CursoLivre.query.order_by(CursoLivre.data).all()
+    )
+
     return render_template(
         "escala/ver.html",
         escala=escala,
@@ -66,7 +73,33 @@ def ver(escala_id):
         instrutores=instrutores,
         dias_semana=dict(DIAS_SEMANA),
         horas_por_instrutor=sorted(horas_por_instrutor.items(), key=lambda kv: -kv[1]),
+        cursos_livres_disponiveis=cursos_livres_disponiveis,
     )
+
+
+@bp.route("/<int:escala_id>/anexar-curso-livre", methods=["POST"])
+def anexar_curso_livre_route(escala_id):
+    escala = Escala.query.get_or_404(escala_id)
+    curso_livre_id = request.form.get("curso_livre_id")
+    if not curso_livre_id:
+        flash("Selecione um curso livre para anexar.", "danger")
+        return redirect(url_for("escala.ver", escala_id=escala_id))
+
+    curso_livre = CursoLivre.query.get_or_404(int(curso_livre_id))
+    if any(s.curso_livre_id == curso_livre.id for s in escala.sessoes):
+        flash("Este curso livre já está anexado a esta escala.", "warning")
+        return redirect(url_for("escala.ver", escala_id=escala_id))
+
+    sessao = anexar_curso_livre(escala, curso_livre)
+    if sessao.status == "confirmado":
+        flash(f'Curso livre "{curso_livre.nome}" anexado e alocado para {sessao.instrutor.nome}.', "success")
+    else:
+        flash(
+            f'Curso livre "{curso_livre.nome}" anexado, mas nenhum instrutor elegível está '
+            "disponível — atribua manualmente abaixo.",
+            "warning",
+        )
+    return redirect(url_for("escala.ver", escala_id=escala_id))
 
 
 @bp.route("/<int:escala_id>/sessao/<int:sessao_id>/reatribuir", methods=["POST"])
