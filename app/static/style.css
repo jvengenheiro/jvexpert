@@ -1,0 +1,20 @@
+body {
+  background-color: #f7f8fa;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.badge-sem-instrutor {
+  background-color: #dc3545;
+}
+
+.badge-confirmado {
+  background-color: #198754;
+}
+
+table td, table th {
+  vertical-align: middle;
+}

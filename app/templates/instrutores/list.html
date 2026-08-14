@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Instrutores{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Instrutores</h1>
+  <a href="{{ url_for('instrutores.novo') }}" class="btn btn-primary">Novo instrutor</a>
+</div>
+
+<div class="card p-3">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Categorias</th>
+        <th>Carga máx./semana</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for instrutor in instrutores %}
+      <tr>
+        <td><a href="{{ url_for('instrutores.detalhe', instrutor_id=instrutor.id) }}">{{ instrutor.nome }}</a></td>
+        <td>
+          {% for cat in instrutor.categorias() %}
+            <span class="badge bg-secondary">{{ cat }}</span>
+          {% endfor %}
+        </td>
+        <td>{{ instrutor.carga_horaria_semanal_max or "—" }}</td>
+        <td>
+          {% if instrutor.ativo %}
+            <span class="badge bg-success">Ativo</span>
+          {% else %}
+            <span class="badge bg-secondary">Inativo</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a href="{{ url_for('instrutores.editar', instrutor_id=instrutor.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Nenhum instrutor cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

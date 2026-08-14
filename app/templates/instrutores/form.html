@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar" if instrutor else "Novo" }} instrutor{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ "Editar" if instrutor else "Novo" }} instrutor</h1>
+
+<div class="card p-4" style="max-width: 640px;">
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Nome *</label>
+      <input type="text" class="form-control" name="nome" value="{{ instrutor.nome if instrutor else '' }}" required>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">E-mail</label>
+        <input type="email" class="form-control" name="email" value="{{ instrutor.email if instrutor else '' }}">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Telefone</label>
+        <input type="text" class="form-control" name="telefone" value="{{ instrutor.telefone if instrutor else '' }}">
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Carga horária máxima semanal (horas)</label>
+      <input type="number" min="1" class="form-control" name="carga_horaria_semanal_max"
+             value="{{ instrutor.carga_horaria_semanal_max if instrutor and instrutor.carga_horaria_semanal_max else '' }}">
+      <div class="form-text">Opcional — usado para balancear a escala. Deixe em branco para não limitar.</div>
+    </div>
+    {% if instrutor %}
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="ativo" id="ativo" {{ "checked" if instrutor.ativo else "" }}>
+      <label class="form-check-label" for="ativo">Ativo (disponível para receber cursos na escala)</label>
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    {% if instrutor %}
+      <a href="{{ url_for('instrutores.detalhe', instrutor_id=instrutor.id) }}" class="btn btn-link">Cancelar</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if instrutor %}
+<p class="mt-3 text-muted">Para gerenciar qualificações, disponibilidade e bloqueios, volte para a
+  <a href="{{ url_for('instrutores.detalhe', instrutor_id=instrutor.id) }}">página do instrutor</a>.</p>
+{% endif %}
+{% endblock %}

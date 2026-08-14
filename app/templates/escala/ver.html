@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Escala {{ escala.data_inicio }} a {{ escala.data_fim }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Escala de {{ escala.data_inicio }} a {{ escala.data_fim }}</h1>
+  <a href="{{ url_for('escala.exportar', escala_id=escala.id) }}" class="btn btn-outline-primary">Exportar CSV</a>
+</div>
+
+<div class="row">
+  <div class="col-lg-9">
+    {% for data, sessoes in sessoes_por_dia %}
+    <div class="card p-3 mb-3">
+      <h2 class="h6">{{ dias_semana[data.weekday()] }}, {{ data.strftime("%d/%m/%Y") }}</h2>
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Curso</th>
+            <th>Categoria</th>
+            <th>Origem</th>
+            <th>Instrutor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sessao in sessoes|sort(attribute="hora_inicio") %}
+          <tr>
+            <td>{{ sessao.hora_inicio.strftime("%H:%M") }}–{{ sessao.hora_fim.strftime("%H:%M") }}</td>
+            <td>{{ sessao.nome_curso }}</td>
+            <td><span class="badge bg-secondary">{{ sessao.categoria }}</span></td>
+            <td>{{ "Fixo" if sessao.origem == "fixo" else "Livre" }}</td>
+            <td style="min-width: 220px;">
+              <form method="post" action="{{ url_for('escala.reatribuir', escala_id=escala.id, sessao_id=sessao.id) }}" class="d-flex gap-1">
+                <select name="instrutor_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                  <option value="">— sem instrutor —</option>
+                  {% for instrutor in instrutores %}
+                    <option value="{{ instrutor.id }}" {{ "selected" if sessao.instrutor_id == instrutor.id else "" }}>{{ instrutor.nome }}</option>
+                  {% endfor %}
+                </select>
+                <noscript><button class="btn btn-sm btn-outline-secondary">Salvar</button></noscript>
+              </form>
+            </td>
+            <td>
+              {% if sessao.status == "confirmado" %}
+                <span class="badge badge-confirmado">Confirmado</span>
+              {% else %}
+                <span class="badge badge-sem-instrutor">Sem instrutor</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card p-4 text-center text-muted">Nenhuma sessão encontrada para este período.</div>
+    {% endfor %}
+  </div>
+
+  <div class="col-lg-3">
+    <div class="card p-3">
+      <h2 class="h6">Carga horária por instrutor</h2>
+      <ul class="list-group list-group-flush">
+        {% for nome, horas in horas_por_instrutor %}
+        <li class="list-group-item d-flex justify-content-between px-0">
+          <span>{{ nome }}</span>
+          <strong>{{ "%.1f"|format(horas) }}h</strong>
+        </li>
+        {% else %}
+        <li class="list-group-item px-0 text-muted">Nenhuma alocação ainda.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

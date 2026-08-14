@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Importar dados{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Importar dados (CSV ou Excel)</h1>
+<p class="text-muted">
+  Use esta tela para importar instrutores e cursos a partir de uma planilha — por exemplo, exportada
+  do SIGOP ou preenchida manualmente. Baixe os modelos abaixo para ver as colunas esperadas.
+</p>
+
+<div class="card p-4 mb-4" style="max-width: 640px;">
+  <form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">O que você está importando? *</label>
+      <select name="tipo" class="form-select" required>
+        <option value="instrutores">Instrutores</option>
+        <option value="cursos_fixos">Cursos fixos</option>
+        <option value="cursos_livres">Cursos livres</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Arquivo (.csv, .xlsx) *</label>
+      <input type="file" class="form-control" name="arquivo" accept=".csv,.xlsx,.xls" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Importar</button>
+  </form>
+</div>
+
+<div class="card p-4" style="max-width: 640px;">
+  <h2 class="h6">Modelos de planilha</h2>
+  <ul class="mb-0">
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_instrutores.csv') }}">exemplo_instrutores.csv</a>
+      — colunas: nome, email, telefone, categorias (separadas por ";"), carga_horaria_semanal_max</li>
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_cursos_fixos.csv') }}">exemplo_cursos_fixos.csv</a>
+      — colunas: nome, categoria, carga_horaria, dia_semana, hora_inicio, hora_fim, data_inicio, data_fim, vagas, instrutor</li>
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_cursos_livres.csv') }}">exemplo_cursos_livres.csv</a>
+      — colunas: nome, categoria, carga_horaria, data, hora_inicio, hora_fim, vagas</li>
+  </ul>
+</div>
+{% endblock %}

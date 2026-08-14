@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ instrutor.nome }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ instrutor.nome }}</h1>
+  <a href="{{ url_for('instrutores.editar', instrutor_id=instrutor.id) }}" class="btn btn-outline-secondary btn-sm">Editar dados</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3 mb-3">
+      <h2 class="h6">Qualificações (categorias de curso)</h2>
+      <p class="text-muted small">O instrutor só recebe cursos cuja categoria bata exatamente com uma destas.</p>
+      <ul class="list-group mb-3">
+        {% for q in instrutor.qualificacoes %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ q.categoria }}
+          <form method="post" action="{{ url_for('instrutores.remover_qualificacao', instrutor_id=instrutor.id, qualificacao_id=q.id) }}">
+            <button class="btn btn-sm btn-outline-danger">Remover</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhuma qualificação cadastrada.</li>
+        {% endfor %}
+      </ul>
+      <form method="post" action="{{ url_for('instrutores.adicionar_qualificacao', instrutor_id=instrutor.id) }}" class="d-flex gap-2">
+        <input type="text" name="categoria" class="form-control" placeholder="ex: Curso Livre - Direção Defensiva" required>
+        <button class="btn btn-primary">Adicionar</button>
+      </form>
+    </div>
+
+    <div class="card p-3">
+      <h2 class="h6">Bloqueios (férias, folgas, atestados)</h2>
+      <ul class="list-group mb-3">
+        {% for b in instrutor.bloqueios %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ b.data_inicio }} a {{ b.data_fim }}{% if b.motivo %} — {{ b.motivo }}{% endif %}</span>
+          <form method="post" action="{{ url_for('instrutores.remover_bloqueio', instrutor_id=instrutor.id, bloqueio_id=b.id) }}">
+            <button class="btn btn-sm btn-outline-danger">Remover</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhum bloqueio cadastrado.</li>
+        {% endfor %}
+      </ul>
+      <form method="post" action="{{ url_for('instrutores.adicionar_bloqueio', instrutor_id=instrutor.id) }}" class="row g-2">
+        <div class="col-md-4">
+          <input type="date" name="data_inicio" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <input type="date" name="data_fim" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" name="motivo" class="form-control" placeholder="Motivo (opcional)">
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary">Adicionar bloqueio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h2 class="h6">Disponibilidade semanal recorrente</h2>
+      <p class="text-muted small">Usada principalmente para cursos fixos. Se nenhuma janela for cadastrada, o instrutor é considerado disponível em qualquer horário (exceto bloqueios).</p>
+      <ul class="list-group mb-3">
+        {% for d in instrutor.disponibilidades %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ dias_semana[d.dia_semana] }} — {{ d.hora_inicio.strftime("%H:%M") }} às {{ d.hora_fim.strftime("%H:%M") }}</span>
+          <form method="post" action="{{ url_for('instrutores.remover_disponibilidade', instrutor_id=instrutor.id, disponibilidade_id=d.id) }}">
+            <button class="btn btn-sm btn-outline-danger">Remover</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhuma janela cadastrada (disponível sempre, exceto bloqueios).</li>
+        {% endfor %}
+      </ul>
+      <form method="post" action="{{ url_for('instrutores.adicionar_disponibilidade', instrutor_id=instrutor.id) }}" class="row g-2">
+        <div class="col-md-4">
+          <select name="dia_semana" class="form-select" required>
+            {% for valor, nome in dias_semana_opcoes %}
+              <option value="{{ valor }}">{{ nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <input type="time" name="hora_inicio" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <input type="time" name="hora_fim" class="form-control" required>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary">Adicionar janela</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

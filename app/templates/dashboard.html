@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Painel</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="text-muted">Instrutores ativos</div>
+      <div class="display-6">{{ resumo.instrutores }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="text-muted">Cursos fixos cadastrados</div>
+      <div class="display-6">{{ resumo.cursos_fixos }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="text-muted">Cursos livres cadastrados</div>
+      <div class="display-6">{{ resumo.cursos_livres }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-4 mb-4">
+  <h2 class="h5">Gerar nova escala</h2>
+  <p class="text-muted">Escolha o período e o sistema vai alocar instrutores nos cursos fixos e livres do intervalo, respeitando qualificação, disponibilidade e evitando conflitos de horário.</p>
+  <form method="post" action="{{ url_for('escala.gerar') }}" class="row g-3 align-items-end">
+    <div class="col-auto">
+      <label class="form-label">Data início</label>
+      <input type="date" class="form-control" name="data_inicio" required>
+    </div>
+    <div class="col-auto">
+      <label class="form-label">Data fim</label>
+      <input type="date" class="form-control" name="data_fim" required>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Gerar escala</button>
+    </div>
+  </form>
+</div>
+
+{% if ultima_escala %}
+<div class="card p-4">
+  <h2 class="h5">Última escala gerada</h2>
+  <p>{{ ultima_escala.data_inicio }} a {{ ultima_escala.data_fim }}</p>
+  <a href="{{ url_for('escala.ver', escala_id=ultima_escala.id) }}" class="btn btn-outline-primary">Ver escala</a>
+</div>
+{% endif %}
+
+<div class="mt-4">
+  <h2 class="h6">Primeiros passos</h2>
+  <ol>
+    <li>Cadastre os <a href="{{ url_for('instrutores.listar') }}">instrutores</a> (ou importe de uma planilha).</li>
+    <li>Cadastre os <a href="{{ url_for('cursos.listar_fixos') }}">cursos fixos</a> e <a href="{{ url_for('cursos.listar_livres') }}">cursos livres</a>.</li>
+    <li>Gere a escala escolhendo um período acima.</li>
+  </ol>
+</div>
+{% endblock %}
