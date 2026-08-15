@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Escalas{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Escalas geradas</h1>
+
+<div class="card p-4 mb-4">
+  <h2 class="h5">Gerar nova escala</h2>
+  <form method="post" action="{{ url_for('escala.gerar') }}" class="row g-3 align-items-end">
+    <div class="col-auto">
+      <label class="form-label">Data início</label>
+      <input type="date" class="form-control" name="data_inicio" required>
+    </div>
+    <div class="col-auto">
+      <label class="form-label">Data fim</label>
+      <input type="date" class="form-control" name="data_fim" required>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Gerar escala</button>
+    </div>
+  </form>
+</div>
+
+<div class="card p-3">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Período</th>
+        <th>Sessões</th>
+        <th>Sem instrutor</th>
+        <th>Criada em</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for escala in escalas %}
+      <tr>
+        <td><a href="{{ url_for('escala.ver', escala_id=escala.id) }}">{{ escala.data_inicio }} a {{ escala.data_fim }}</a></td>
+        <td>{{ escala.sessoes|length }}</td>
+        <td>
+          {% set pendentes = escala.sessoes|selectattr("status", "equalto", "sem_instrutor")|list|length %}
+          {% if pendentes %}
+            <span class="badge bg-danger">{{ pendentes }}</span>
+          {% else %}
+            <span class="badge bg-success">0</span>
+          {% endif %}
+        </td>
+        <td>{{ escala.criada_em.strftime("%d/%m/%Y %H:%M") if escala.criada_em else "" }}</td>
+        <td class="text-end">
+          <form method="post" action="{{ url_for('escala.excluir', escala_id=escala.id) }}" class="d-inline" onsubmit="return confirm('Excluir esta escala?');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma escala gerada ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

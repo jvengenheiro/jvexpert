@@ -1,0 +1,4 @@
+nome,email,telefone,categorias,carga_horaria_semanal_max
+João Silva,joao.silva@exemplo.com,(11) 90000-0001,Direção Defensiva;Transporte de Cargas,40
+Maria Souza,maria.souza@exemplo.com,(11) 90000-0002,Primeiros Socorros;Direção Defensiva,30
+Carlos Pereira,carlos.pereira@exemplo.com,(11) 90000-0003,Transporte de Cargas,40

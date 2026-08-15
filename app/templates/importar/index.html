@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Importar dados{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Importar dados</h1>
+<p class="text-muted">
+  Importe instrutores e cursos a partir de um arquivo <strong>CSV, Excel (.xlsx/.xls), Word (.docx) ou PDF</strong>
+  — por exemplo, exportado do SIGOP. Os nomes das colunas não precisam ser exatos: o sistema reconhece
+  variações comuns (ex: "Nome do Curso", "Curso" ou "Descrição" viram todos o campo "nome") e pode até
+  detectar sozinho se é uma lista de instrutores, cursos fixos ou cursos livres.
+</p>
+
+<div class="card p-4 mb-4" style="max-width: 640px;">
+  <form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">O que você está importando? *</label>
+      <select name="tipo" class="form-select" required>
+        <option value="auto" selected>Detectar automaticamente</option>
+        <option value="instrutores">Instrutores</option>
+        <option value="cursos_fixos">Cursos fixos</option>
+        <option value="cursos_livres">Cursos livres</option>
+      </select>
+      <div class="form-text">Se a detecção automática não funcionar, escolha o tipo manualmente e importe de novo.</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Arquivo (.csv, .xlsx, .xls, .docx, .pdf) *</label>
+      <input type="file" class="form-control" name="arquivo" accept=".csv,.xlsx,.xls,.docx,.pdf" required>
+      <div class="form-text">PDF e Word só funcionam se o arquivo tiver uma tabela de verdade — não em texto corrido ou digitalizado.</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Importar</button>
+  </form>
+</div>
+
+<div class="card p-4" style="max-width: 640px;">
+  <h2 class="h6">Modelos de planilha (CSV)</h2>
+  <ul class="mb-0">
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_instrutores.csv') }}">exemplo_instrutores.csv</a>
+      — colunas: nome, email, telefone, categorias (separadas por ";"), carga_horaria_semanal_max</li>
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_cursos_fixos.csv') }}">exemplo_cursos_fixos.csv</a>
+      — colunas: nome, categoria, carga_horaria, dia_semana, hora_inicio, hora_fim, data_inicio, data_fim, vagas, instrutor</li>
+    <li><a href="{{ url_for('importar.exemplo', nome_arquivo='exemplo_cursos_livres.csv') }}">exemplo_cursos_livres.csv</a>
+      — colunas: nome, categoria, carga_horaria, data, hora_inicio, hora_fim, vagas</li>
+  </ul>
+  <p class="text-muted small mt-2 mb-0">
+    Essas mesmas colunas (com nomes parecidos) funcionam também em Excel, Word (numa tabela) e PDF (numa tabela).
+  </p>
+</div>
+{% endblock %}

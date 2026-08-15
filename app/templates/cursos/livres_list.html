@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Cursos Livres{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Cursos Livres</h1>
+  <a href="{{ url_for('cursos.novo_livre') }}" class="btn btn-primary">Novo curso livre</a>
+</div>
+<p class="text-muted">Turmas avulsas, com data específica, abertas sob demanda.</p>
+
+<div class="card p-3">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Curso</th>
+        <th>Categoria</th>
+        <th>Data</th>
+        <th>Horário</th>
+        <th>Anexar a uma escala</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for curso in cursos %}
+      <tr>
+        <td>{{ curso.nome }}</td>
+        <td><span class="badge bg-secondary">{{ curso.categoria }}</span></td>
+        <td>{{ curso.data }}</td>
+        <td>{{ curso.hora_inicio.strftime("%H:%M") }}–{{ curso.hora_fim.strftime("%H:%M") }}</td>
+        <td style="min-width: 260px;">
+          {% if escalas %}
+          <form method="post" action="{{ url_for('cursos.anexar_livre_a_escala', curso_id=curso.id) }}" class="d-flex gap-1">
+            <select name="escala_id" class="form-select form-select-sm" required>
+              {% for escala in escalas %}
+                <option value="{{ escala.id }}">{{ escala.data_inicio }} a {{ escala.data_fim }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-sm btn-outline-primary text-nowrap">Anexar</button>
+          </form>
+          {% else %}
+          <span class="text-muted small">Gere uma escala primeiro</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a href="{{ url_for('cursos.editar_livre', curso_id=curso.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+          <form method="post" action="{{ url_for('cursos.excluir_livre', curso_id=curso.id) }}" class="d-inline" onsubmit="return confirm('Excluir este curso livre?');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Nenhum curso livre cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

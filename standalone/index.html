@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escala de Instrutores</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --card-bg: #ffffff;
+    --text: #1f2430;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #6b7280;
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --danger: #b91c1c;
+    --danger-bg: #fee2e2;
+    --warning: #92400e;
+    --warning-bg: #fef3c7;
+    --navbar-bg: #111827;
+    --navbar-text: #e5e7eb;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  nav {
+    background: var(--navbar-bg);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  nav .brand { color: #fff; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+  nav a.tab {
+    color: var(--navbar-text);
+    text-decoration: none;
+    font-size: 0.92rem;
+    padding: 0.3rem 0.1rem;
+    border-bottom: 2px solid transparent;
+  }
+  nav a.tab.active, nav a.tab:hover { color: #fff; border-bottom-color: var(--primary); }
+  .container { max-width: 1080px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 1rem; }
+  h2 { font-size: 1.05rem; margin: 0 0 0.75rem; }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 0.85rem; }
+  .card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .col { flex: 1 1 220px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 720px) { .grid-2, .grid-3, .layout-2col { grid-template-columns: 1fr !important; } }
+  .layout-2col { display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; align-items: start; }
+  label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+  input, select, textarea {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    background: #fff;
+    color: var(--text);
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+  .field { margin-bottom: 0.9rem; }
+  .form-inline { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-end; }
+  .form-inline .field { margin-bottom: 0; flex: 1 1 140px; }
+  button, .btn {
+    display: inline-block;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    background: var(--primary);
+    color: #fff;
+  }
+  button:hover, .btn:hover { background: var(--primary-dark); }
+  .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+  .btn-outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+  .btn-outline:hover { background: #eff6ff; }
+  .btn-secondary { background: var(--secondary); }
+  .btn-secondary:hover { background: #4b5563; }
+  .btn-danger { background: var(--danger); }
+  .btn-danger:hover { background: #7f1d1d; }
+  .btn-link { background: none; color: var(--secondary); border: none; padding: 0.4rem; }
+  .btn-block { width: 100%; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: middle; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; }
+  tr:last-child td { border-bottom: none; }
+  .table-wrap { overflow-x: auto; }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #e5e7eb;
+    color: #374151;
+  }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger); }
+  .badge-warning { background: var(--warning-bg); color: var(--warning); }
+  .empty { text-align: center; color: var(--text-muted); padding: 2rem 1rem; }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .alert {
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .alert-success { background: var(--success-bg); color: var(--success); }
+  .alert-danger { background: var(--danger-bg); color: var(--danger); }
+  .alert-warning { background: var(--warning-bg); color: var(--warning); }
+  .alert button { background: none; border: none; color: inherit; font-weight: 700; cursor: pointer; padding: 0 0.2rem; }
+  .list-plain { list-style: none; margin: 0 0 0.75rem; padding: 0; }
+  .list-plain li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.45rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
+  }
+  .list-plain li:last-child { border-bottom: none; }
+  a { color: var(--primary); }
+  .stat { font-size: 1.9rem; font-weight: 700; }
+  .steps { padding-left: 1.2rem; }
+  .steps li { margin-bottom: 0.3rem; }
+  code { background: #eef0f3; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+  footer.app-footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 2rem 0 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#/">Escala de Instrutores</a>
+  <a class="tab" href="#/instrutores">Instrutores</a>
+  <a class="tab" href="#/cursos-fixos">Cursos Fixos</a>
+  <a class="tab" href="#/cursos-livres">Cursos Livres</a>
+  <a class="tab" href="#/escalas">Escalas</a>
+  <a class="tab" href="#/importar">Importar</a>
+</nav>
+
+<div class="container">
+  <div id="alerts"></div>
+  <div id="app"></div>
+  <footer class="app-footer">Escala de Instrutores &mdash; roda 100% no navegador, dados salvos localmente neste dispositivo (localStorage).</footer>
+</div>
+
+<script>
+"use strict";
+
+/* ============================== Constantes ============================== */
+
+var DIAS_SEMANA = [
+  [0, "Segunda-feira"], [1, "Terça-feira"], [2, "Quarta-feira"],
+  [3, "Quinta-feira"], [4, "Sexta-feira"], [5, "Sábado"], [6, "Domingo"]
+];
+var DIAS_SEMANA_MAP = Object.fromEntries(DIAS_SEMANA);
+var DIAS_SEMANA_NOMES = {
+  "segunda": 0, "segunda-feira": 0, "terca": 1, "terça": 1, "terca-feira": 1, "terça-feira": 1,
+  "quarta": 2, "quarta-feira": 2, "quinta": 3, "quinta-feira": 3, "sexta": 4, "sexta-feira": 4,
+  "sabado": 5, "sábado": 5, "domingo": 6
+};
+
+/* ============================== Persistência ============================== */
+
+var DB_KEY = "escalaInstrutoresDB_v1";
+
+function defaultState() {
+  return { instrutores: [], cursosFixos: [], cursosLivres: [], escalas: [], nextId: 1 };
+}
+
+function loadDB() {
+  try {
+    var raw = localStorage.getItem(DB_KEY);
+    if (!raw) return defaultState();
+    var parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  } catch (e) {
+    console.error("Falha ao carregar dados salvos, iniciando do zero.", e);
+    return defaultState();
+  }
+}
+
+function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
+
+function newId() { return DB.nextId++; }
+
+var DB = loadDB();
+
+/* ============================== Utilitários ============================== */
+
+function escapeHtml(str) {
+  return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function formatDateBR(iso) {
+  if (!iso) return "";
+  var p = iso.split("-");
+  return p[2] + "/" + p[1] + "/" + p[0];
+}
+
+function diaSemanaISO(dataISO) {
+  var d = new Date(dataISO + "T00:00:00Z");
+  return (d.getUTCDay() + 6) % 7;
+}
+
+function addDiasISO(dataISO, dias) {
+  var d = new Date(dataISO + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + dias);
+  return d.toISOString().slice(0, 10);
+}
+
+function getISOWeekKey(dataISO) {
+  var d = new Date(dataISO + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + 4 - ((d.getUTCDay() || 7)));
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return d.getUTCFullYear() + "-W" + weekNo;
+}
+
+function duracaoHoras(horaInicio, horaFim) {
+  function mins(h) { var p = h.split(":"); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+  return (mins(horaFim) - mins(horaInicio)) / 60;
+}
+
+function intOuNull(v) {
+  if (v === null || v === undefined || v === "") return null;
+  var n = parseInt(v, 10);
+  return isNaN(n) ? null : n;
+}
+
+function parseDataFlexivel(valor) {
+  var v = String(valor).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  var m = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (m) return m[3] + "-" + m[2] + "-" + m[1];
+  throw new Error("data inválida (use AAAA-MM-DD): " + valor);
+}
+
+function parseHoraFlexivel(valor) {
+  var v = String(valor).trim();
+  if (/^\d{2}:\d{2}$/.test(v)) return v;
+  if (/^\d{2}:\d{2}:\d{2}$/.test(v)) return v.slice(0, 5);
+  throw new Error("horário inválido (use HH:MM): " + valor);
+}
+
+function parseDiaSemanaFlexivel(valor) {
+  var v = String(valor).trim().toLowerCase();
+  if (v in DIAS_SEMANA_NOMES) return DIAS_SEMANA_NOMES[v];
+  var n = parseInt(v, 10);
+  if (!isNaN(n) && n >= 0 && n <= 6) return n;
+  throw new Error("dia_semana inválido: " + valor);
+}
+
+function downloadTextFile(filename, mime, content) {
+  var blob = new Blob([content], { type: mime });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ============================== Flash messages ============================== */
+
+function flash(message, type) {
+  var el = document.getElementById("alerts");
+  var div = document.createElement("div");
+  div.className = "alert alert-" + (type || "success");
+  div.innerHTML = "<span>" + escapeHtml(message) + "</span><button type=\"button\" onclick=\"this.parentElement.remove()\">&times;</button>";
+  el.appendChild(div);
+  setTimeout(function () { if (div.parentElement) div.remove(); }, 6000);
+}
+
+/* ============================== Instrutores ============================== */
+
+function categoriasDoInstrutor(instrutor) {
+  var set = {};
+  instrutor.qualificacoes.forEach(function (q) { set[q.categoria] = true; });
+  return Object.keys(set);
+}
+
+function instrutorPorId(id) { return DB.instrutores.find(function (i) { return i.id === id; }); }
+
+function salvarInstrutor(dados, id) {
+  var instrutor;
+  if (id) {
+    instrutor = instrutorPorId(id);
+  } else {
+    instrutor = { id: newId(), qualificacoes: [], disponibilidades: [], bloqueios: [] };
+    DB.instrutores.push(instrutor);
+  }
+  instrutor.nome = dados.nome;
+  instrutor.email = dados.email || null;
+  instrutor.telefone = dados.telefone || null;
+  instrutor.cargaHorariaSemanalMax = intOuNull(dados.cargaHorariaSemanalMax);
+  instrutor.ativo = dados.ativo !== undefined ? !!dados.ativo : (instrutor.ativo !== undefined ? instrutor.ativo : true);
+  saveDB();
+  return instrutor;
+}
+
+/* ============================== Cursos fixos / livres ============================== */
+
+function cursoFixoPorId(id) { return DB.cursosFixos.find(function (c) { return c.id === id; }); }
+function cursoLivrePorId(id) { return DB.cursosLivres.find(function (c) { return c.id === id; }); }
+
+function salvarCursoFixo(dados, id) {
+  var curso;
+  if (id) { curso = cursoFixoPorId(id); } else { curso = { id: newId() }; DB.cursosFixos.push(curso); }
+  Object.assign(curso, {
+    nome: dados.nome, categoria: dados.categoria,
+    cargaHoraria: intOuNull(dados.cargaHoraria),
+    diaSemana: parseInt(dados.diaSemana, 10),
+    horaInicio: dados.horaInicio, horaFim: dados.horaFim,
+    dataInicio: dados.dataInicio, dataFim: dados.dataFim,
+    vagas: intOuNull(dados.vagas),
+    instrutorFixoId: dados.instrutorFixoId ? parseInt(dados.instrutorFixoId, 10) : null
+  });
+  if (curso.horaInicio >= curso.horaFim) throw new Error("horário de início deve ser antes do horário de fim");
+  if (curso.dataInicio > curso.dataFim) throw new Error("data de início deve ser antes ou igual à data de fim");
+  saveDB();
+  return curso;
+}
+
+function salvarCursoLivre(dados, id) {
+  var curso;
+  if (id) { curso = cursoLivrePorId(id); } else { curso = { id: newId() }; DB.cursosLivres.push(curso); }
+  Object.assign(curso, {
+    nome: dados.nome, categoria: dados.categoria,
+    cargaHoraria: intOuNull(dados.cargaHoraria),
+    data: dados.data, horaInicio: dados.horaInicio, horaFim: dados.horaFim,
+    vagas: intOuNull(dados.vagas)
+  });
+  if (curso.horaInicio >= curso.horaFim) throw new Error("horário de início deve ser antes do horário de fim");
+  saveDB();
+  return curso;
+}
+
+/* ============================== Motor de geração de escala ============================== */
+/* Mesma estratégia da versão Flask: cursos fixos são expandidos automaticamente pela
+   recorrência semanal dentro do período; cursos livres são anexados manualmente a uma
+   escala já gerada. Para cada ocorrência, escolhe o instrutor elegível (qualificação,
+   disponibilidade, sem conflito de horário, dentro do limite semanal) com menor carga
+   horária já alocada — priorizando o instrutor titular quando definido e disponível. */
+
+function expandirCursosFixos(dataInicio, dataFim) {
+  var ocorrencias = [];
+  DB.cursosFixos.forEach(function (curso) {
+    var inicioEfetivo = dataInicio > curso.dataInicio ? dataInicio : curso.dataInicio;
+    var fimEfetivo = dataFim < curso.dataFim ? dataFim : curso.dataFim;
+    if (inicioEfetivo > fimEfetivo) return;
+    var dia = inicioEfetivo;
+    while (dia <= fimEfetivo) {
+      if (diaSemanaISO(dia) === curso.diaSemana) {
+        ocorrencias.push({
+          origem: "fixo", cursoFixoId: curso.id, cursoLivreId: null,
+          nomeCurso: curso.nome, categoria: curso.categoria, data: dia,
+          horaInicio: curso.horaInicio, horaFim: curso.horaFim,
+          instrutorTitularId: curso.instrutorFixoId
+        });
+      }
+      dia = addDiasISO(dia, 1);
+    }
+  });
+  return ocorrencias;
+}
+
+function ocorrenciaCursoLivre(curso) {
+  return {
+    origem: "livre", cursoFixoId: null, cursoLivreId: curso.id,
+    nomeCurso: curso.nome, categoria: curso.categoria, data: curso.data,
+    horaInicio: curso.horaInicio, horaFim: curso.horaFim, instrutorTitularId: null
+  };
+}
+
+function disponivel(instrutor, data, horaInicio, horaFim) {
+  for (var i = 0; i < instrutor.bloqueios.length; i++) {
+    var b = instrutor.bloqueios[i];
+    if (b.dataInicio <= data && data <= b.dataFim) return false;
+  }
+  if (instrutor.disponibilidades.length === 0) return true;
+  var diaSemana = diaSemanaISO(data);
+  return instrutor.disponibilidades.some(function (d) {
+    return d.diaSemana === diaSemana && d.horaInicio <= horaInicio && d.horaFim >= horaFim;
+  });
+}
+
+function semConflito(agendaInstrutor, data, horaInicio, horaFim) {
+  return !agendaInstrutor.some(function (s) {
+    return s.data === data && horaInicio < s.horaFim && s.horaInicio < horaFim;
+  });
+}
+
+function estadoInicial(instrutores) {
+  var horasAlocadas = {}, horasSemana = {}, agenda = {};
+  instrutores.forEach(function (i) { horasAlocadas[i.id] = 0; agenda[i.id] = []; });
+  return { horasAlocadas: horasAlocadas, horasSemana: horasSemana, agenda: agenda };
+}
+
+function estadoAPartirDaEscala(instrutores, escala) {
+  var estado = estadoInicial(instrutores);
+  escala.sessoes.forEach(function (s) {
+    if (!s.instrutorId || !(s.instrutorId in estado.horasAlocadas)) return;
+    var duracao = duracaoHoras(s.horaInicio, s.horaFim);
+    var chaveSemana = s.instrutorId + "|" + getISOWeekKey(s.data);
+    estado.horasAlocadas[s.instrutorId] += duracao;
+    estado.horasSemana[chaveSemana] = (estado.horasSemana[chaveSemana] || 0) + duracao;
+    estado.agenda[s.instrutorId].push({ data: s.data, horaInicio: s.horaInicio, horaFim: s.horaFim });
+  });
+  return estado;
+}
+
+function qualificadosPorCategoria(instrutores) {
+  var mapa = {};
+  instrutores.forEach(function (i) {
+    categoriasDoInstrutor(i).forEach(function (c) {
+      (mapa[c] = mapa[c] || []).push(i);
+    });
+  });
+  return mapa;
+}
+
+function escolherInstrutor(oc, mapaQualificados, estado) {
+  var duracao = duracaoHoras(oc.horaInicio, oc.horaFim);
+  var semanaChave = getISOWeekKey(oc.data);
+  var candidatos = (mapaQualificados[oc.categoria] || []).filter(function (i) {
+    var chave = i.id + "|" + semanaChave;
+    return disponivel(i, oc.data, oc.horaInicio, oc.horaFim) &&
+      semConflito(estado.agenda[i.id], oc.data, oc.horaInicio, oc.horaFim) &&
+      (i.cargaHorariaSemanalMax == null || (estado.horasSemana[chave] || 0) + duracao <= i.cargaHorariaSemanalMax);
+  });
+
+  if (oc.instrutorTitularId != null) {
+    var titular = candidatos.find(function (c) { return c.id === oc.instrutorTitularId; });
+    if (titular) return titular;
+  }
+  if (candidatos.length === 0) return null;
+  candidatos.sort(function (a, b) {
+    var da = estado.horasAlocadas[a.id] - estado.horasAlocadas[b.id];
+    return da !== 0 ? da : a.id - b.id;
+  });
+  return candidatos[0];
+}
+
+function criarSessaoAlocada(escala, oc, escolhido, estado) {
+  var sessao = {
+    id: newId(), origem: oc.origem, cursoFixoId: oc.cursoFixoId, cursoLivreId: oc.cursoLivreId,
+    nomeCurso: oc.nomeCurso, categoria: oc.categoria, data: oc.data,
+    horaInicio: oc.horaInicio, horaFim: oc.horaFim, instrutorId: null, status: "sem_instrutor"
+  };
+  if (escolhido) {
+    var duracao = duracaoHoras(oc.horaInicio, oc.horaFim);
+    var chave = escolhido.id + "|" + getISOWeekKey(oc.data);
+    sessao.instrutorId = escolhido.id;
+    sessao.status = "confirmado";
+    estado.horasAlocadas[escolhido.id] += duracao;
+    estado.horasSemana[chave] = (estado.horasSemana[chave] || 0) + duracao;
+    estado.agenda[escolhido.id].push({ data: oc.data, horaInicio: oc.horaInicio, horaFim: oc.horaFim });
+  }
+  escala.sessoes.push(sessao);
+  return sessao;
+}
+
+function gerarEscala(dataInicio, dataFim) {
+  if (dataInicio > dataFim) throw new Error("data_inicio deve ser anterior ou igual a data_fim");
+  var escala = { id: newId(), dataInicio: dataInicio, dataFim: dataFim, criadaEm: new Date().toISOString(), sessoes: [] };
+  DB.escalas.push(escala);
+
+  var ocorrencias = expandirCursosFixos(dataInicio, dataFim);
+  ocorrencias.sort(function (a, b) {
+    return a.data === b.data ? a.horaInicio.localeCompare(b.horaInicio) : a.data.localeCompare(b.data);
+  });
+
+  var instrutoresAtivos = DB.instrutores.filter(function (i) { return i.ativo; });
+  var mapaQualificados = qualificadosPorCategoria(instrutoresAtivos);
+  var estado = estadoInicial(instrutoresAtivos);
+
+  ocorrencias.forEach(function (oc) {
+    var escolhido = escolherInstrutor(oc, mapaQualificados, estado);
+    criarSessaoAlocada(escala, oc, escolhido, estado);
+  });
+
+  saveDB();
+  return escala;
+}
+
+function anexarCursoLivreNaEscala(escala, cursoLivre) {
+  var instrutoresAtivos = DB.instrutores.filter(function (i) { return i.ativo; });
+  var mapaQualificados = qualificadosPorCategoria(instrutoresAtivos);
+  var estado = estadoAPartirDaEscala(instrutoresAtivos, escala);
+  var oc = ocorrenciaCursoLivre(cursoLivre);
+  var escolhido = escolherInstrutor(oc, mapaQualificados, estado);
+  var sessao = criarSessaoAlocada(escala, oc, escolhido, estado);
+  saveDB();
+  return sessao;
+}
+
+function escalaPorId(id) { return DB.escalas.find(function (e) { return e.id === id; }); }
+
+function exportarEscalaCSV(escala) {
+  var linhas = [["data", "dia_semana", "hora_inicio", "hora_fim", "curso", "categoria", "origem", "instrutor", "status"]];
+  escala.sessoes.slice().sort(function (a, b) {
+    return a.data === b.data ? a.horaInicio.localeCompare(b.horaInicio) : a.data.localeCompare(b.data);
+  }).forEach(function (s) {
+    var instrutor = s.instrutorId ? instrutorPorId(s.instrutorId) : null;
+    linhas.push([
+      s.data, DIAS_SEMANA_MAP[diaSemanaISO(s.data)], s.horaInicio, s.horaFim,
+      s.nomeCurso, s.categoria, s.origem, instrutor ? instrutor.nome : "", s.status
+    ]);
+  });
+  var csv = linhas.map(function (linha) {
+    return linha.map(function (campo) {
+      var v = String(campo == null ? "" : campo);
+      return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(",");
+  }).join("\r\n");
+  downloadTextFile("escala_" + escala.dataInicio + "_" + escala.dataFim + ".csv", "text/csv;charset=utf-8", csv);
+}
+
+/* ============================== Importação CSV ============================== */
+
+function parseCSV(text) {
+  var rows = [], row = [], field = "", inQuotes = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQuotes) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; } }
+      else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else if (c === "\r") { /* ignora */ }
+      else field += c;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  rows = rows.filter(function (r) { return !(r.length === 1 && r[0].trim() === ""); });
+  if (rows.length === 0) return [];
+  var header = rows[0].map(function (h) { return h.trim(); });
+  return rows.slice(1).map(function (r) {
+    var obj = {};
+    header.forEach(function (h, idx) { obj[h] = r[idx] !== undefined ? r[idx].trim() : ""; });
+    return obj;
+  });
+}
+
+function valorOpcional(linha, coluna) {
+  var v = linha[coluna];
+  return v === undefined || v === "" ? null : v;
+}
+
+function importarInstrutoresCSV(rows) {
+  var criados = 0, erros = [];
+  rows.forEach(function (linha, idx) {
+    try {
+      var nome = (linha.nome || "").trim();
+      if (!nome) throw new Error("nome é obrigatório");
+      var instrutor = DB.instrutores.find(function (i) { return i.nome === nome; });
+      if (!instrutor) {
+        instrutor = { id: newId(), nome: nome, qualificacoes: [], disponibilidades: [], bloqueios: [], ativo: true };
+        DB.instrutores.push(instrutor);
+      }
+      instrutor.email = valorOpcional(linha, "email");
+      instrutor.telefone = valorOpcional(linha, "telefone");
+      var carga = valorOpcional(linha, "carga_horaria_semanal_max");
+      instrutor.cargaHorariaSemanalMax = carga ? parseInt(carga, 10) : null;
+      var categoriasRaw = valorOpcional(linha, "categorias");
+      if (categoriasRaw) {
+        instrutor.qualificacoes = categoriasRaw.split(";").map(function (c) { return c.trim(); })
+          .filter(Boolean).map(function (c) { return { id: newId(), categoria: c }; });
+      }
+      criados++;
+    } catch (e) { erros.push("linha " + (idx + 2) + ": " + e.message); }
+  });
+  saveDB();
+  return { criados: criados, erros: erros };
+}
+
+function importarCursosFixosCSV(rows) {
+  var criados = 0, erros = [];
+  rows.forEach(function (linha, idx) {
+    try {
+      var instrutorFixoId = null;
+      var instrutorNome = valorOpcional(linha, "instrutor");
+      if (instrutorNome) {
+        var instrutor = DB.instrutores.find(function (i) { return i.nome === instrutorNome; });
+        if (!instrutor) throw new Error("instrutor não encontrado: " + instrutorNome);
+        instrutorFixoId = instrutor.id;
+      }
+      var curso = {
+        id: newId(),
+        nome: (linha.nome || "").trim(),
+        categoria: (linha.categoria || "").trim(),
+        cargaHoraria: intOuNull(valorOpcional(linha, "carga_horaria")),
+        diaSemana: parseDiaSemanaFlexivel(linha.dia_semana),
+        horaInicio: parseHoraFlexivel(linha.hora_inicio),
+        horaFim: parseHoraFlexivel(linha.hora_fim),
+        dataInicio: parseDataFlexivel(linha.data_inicio),
+        dataFim: parseDataFlexivel(linha.data_fim),
+        vagas: intOuNull(valorOpcional(linha, "vagas")),
+        instrutorFixoId: instrutorFixoId
+      };
+      if (!curso.nome || !curso.categoria) throw new Error("nome e categoria são obrigatórios");
+      DB.cursosFixos.push(curso);
+      criados++;
+    } catch (e) { erros.push("linha " + (idx + 2) + ": " + e.message); }
+  });
+  saveDB();
+  return { criados: criados, erros: erros };
+}
+
+function importarCursosLivresCSV(rows) {
+  var criados = 0, erros = [];
+  rows.forEach(function (linha, idx) {
+    try {
+      var curso = {
+        id: newId(),
+        nome: (linha.nome || "").trim(),
+        categoria: (linha.categoria || "").trim(),
+        cargaHoraria: intOuNull(valorOpcional(linha, "carga_horaria")),
+        data: parseDataFlexivel(linha.data),
+        horaInicio: parseHoraFlexivel(linha.hora_inicio),
+        horaFim: parseHoraFlexivel(linha.hora_fim),
+        vagas: intOuNull(valorOpcional(linha, "vagas"))
+      };
+      if (!curso.nome || !curso.categoria) throw new Error("nome e categoria são obrigatórios");
+      DB.cursosLivres.push(curso);
+      criados++;
+    } catch (e) { erros.push("linha " + (idx + 2) + ": " + e.message); }
+  });
+  saveDB();
+  return { criados: criados, erros: erros };
+}
+
+/* ============================== Dados de exemplo ============================== */
+
+function carregarDadosExemplo() {
+  importarInstrutoresCSV(parseCSV(
+    "nome,email,telefone,categorias,carga_horaria_semanal_max\n" +
+    "João Silva,joao.silva@exemplo.com,(11) 90000-0001,Direção Defensiva;Transporte de Cargas,40\n" +
+    "Maria Souza,maria.souza@exemplo.com,(11) 90000-0002,Primeiros Socorros;Direção Defensiva,30\n" +
+    "Carlos Pereira,carlos.pereira@exemplo.com,(11) 90000-0003,Transporte de Cargas,40\n"
+  ));
+  importarCursosFixosCSV(parseCSV(
+    "nome,categoria,carga_horaria,dia_semana,hora_inicio,hora_fim,data_inicio,data_fim,vagas,instrutor\n" +
+    "Transporte de Cargas - Turma A,Transporte de Cargas,40,segunda-feira,08:00,12:00,2026-08-17,2026-11-30,25,Carlos Pereira\n" +
+    "Direção Defensiva - Turma B,Direção Defensiva,20,quarta-feira,14:00,18:00,2026-08-17,2026-11-30,25,\n"
+  ));
+  importarCursosLivresCSV(parseCSV(
+    "nome,categoria,carga_horaria,data,hora_inicio,hora_fim,vagas\n" +
+    "Reciclagem - Direção Defensiva,Direção Defensiva,8,2026-08-22,08:00,17:00,20\n" +
+    "Primeiros Socorros - Turma Extra,Primeiros Socorros,4,2026-08-25,13:00,17:00,20\n"
+  ));
+  flash("Dados de exemplo carregados: 3 instrutores, 2 cursos fixos, 2 cursos livres.", "success");
+  render();
+}
+
+var MODELOS_CSV = {
+  instrutores: "nome,email,telefone,categorias,carga_horaria_semanal_max\nJoão Silva,joao.silva@exemplo.com,(11) 90000-0001,Direção Defensiva;Transporte de Cargas,40\n",
+  cursos_fixos: "nome,categoria,carga_horaria,dia_semana,hora_inicio,hora_fim,data_inicio,data_fim,vagas,instrutor\nTransporte de Cargas - Turma A,Transporte de Cargas,40,segunda-feira,08:00,12:00,2026-08-17,2026-11-30,25,Carlos Pereira\n",
+  cursos_livres: "nome,categoria,carga_horaria,data,hora_inicio,hora_fim,vagas\nReciclagem - Direção Defensiva,Direção Defensiva,8,2026-08-22,08:00,17:00,20\n"
+};
+
+/* ============================== Router / Render ============================== */
+
+var app = document.getElementById("app");
+
+function parseHash() {
+  var h = location.hash.replace(/^#\/?/, "");
+  return h ? h.split("/") : [];
+}
+
+function navegar(hash) { location.hash = hash; }
+
+function render() {
+  var partes = parseHash();
+  document.querySelectorAll("nav a.tab").forEach(function (a) { a.classList.remove("active"); });
+
+  if (partes.length === 0) { setActiveTab(null); renderDashboard(); return; }
+  var secao = partes[0];
+
+  if (secao === "instrutores") {
+    setActiveTab("instrutores");
+    if (partes[1] === "novo") renderInstrutorForm(null);
+    else if (partes[1] && partes[2] === "editar") renderInstrutorForm(parseInt(partes[1], 10));
+    else if (partes[1]) renderInstrutorDetalhe(parseInt(partes[1], 10));
+    else renderInstrutoresList();
+  } else if (secao === "cursos-fixos") {
+    setActiveTab("cursos-fixos");
+    if (partes[1] === "novo") renderCursoFixoForm(null);
+    else if (partes[1] && partes[2] === "editar") renderCursoFixoForm(parseInt(partes[1], 10));
+    else renderCursosFixosList();
+  } else if (secao === "cursos-livres") {
+    setActiveTab("cursos-livres");
+    if (partes[1] === "novo") renderCursoLivreForm(null);
+    else if (partes[1] && partes[2] === "editar") renderCursoLivreForm(parseInt(partes[1], 10));
+    else renderCursosLivresList();
+  } else if (secao === "escalas") {
+    setActiveTab("escalas");
+    if (partes[1]) renderEscalaVer(parseInt(partes[1], 10));
+    else renderEscalasList();
+  } else if (secao === "importar") {
+    setActiveTab("importar");
+    renderImportar();
+  } else {
+    renderDashboard();
+  }
+  window.scrollTo(0, 0);
+}
+
+function setActiveTab(nome) {
+  if (!nome) return;
+  var el = document.querySelector('nav a.tab[href="#/' + nome + '"]');
+  if (el) el.classList.add("active");
+}
+
+window.addEventListener("hashchange", render);
+window.addEventListener("DOMContentLoaded", render);
+
+/* ---------- Dashboard ---------- */
+
+function renderDashboard() {
+  var ultimaEscala = DB.escalas[DB.escalas.length - 1];
+  app.innerHTML =
+    '<h1>Painel</h1>' +
+    '<div class="grid-3">' +
+      statCard("Instrutores ativos", DB.instrutores.filter(function (i) { return i.ativo; }).length) +
+      statCard("Cursos fixos cadastrados", DB.cursosFixos.length) +
+      statCard("Cursos livres cadastrados", DB.cursosLivres.length) +
+    '</div>' +
+    '<div class="card">' +
+      '<h2>Gerar nova escala</h2>' +
+      '<p class="muted small">Escolha o período: os cursos fixos do intervalo entram automaticamente. Cursos livres são anexados depois, na tela da escala.</p>' +
+      formGerarEscala() +
+    '</div>' +
+    (ultimaEscala ?
+      '<div class="card"><h2>Última escala gerada</h2><p>' + formatDateBR(ultimaEscala.dataInicio) + ' a ' + formatDateBR(ultimaEscala.dataFim) + '</p>' +
+      '<a class="btn btn-outline" href="#/escalas/' + ultimaEscala.id + '">Ver escala</a></div>' : '') +
+    '<div class="card"><h2 class="small" style="text-transform:uppercase;color:var(--text-muted);">Primeiros passos</h2>' +
+      '<ol class="steps">' +
+      '<li>Cadastre os <a href="#/instrutores">instrutores</a> (ou carregue dados de exemplo na tela de <a href="#/importar">Importar</a>).</li>' +
+      '<li>Cadastre os <a href="#/cursos-fixos">cursos fixos</a> e <a href="#/cursos-livres">cursos livres</a>.</li>' +
+      '<li>Gere a escala escolhendo um período acima.</li>' +
+      '</ol></div>';
+
+  var f = document.getElementById("form-gerar-escala");
+  if (f) f.addEventListener("submit", onSubmitGerarEscala);
+}
+
+function statCard(titulo, valor) {
+  return '<div class="card"><div class="muted small">' + escapeHtml(titulo) + '</div><div class="stat">' + valor + '</div></div>';
+}
+
+function formGerarEscala() {
+  return '<form id="form-gerar-escala" class="form-inline">' +
+    '<div class="field"><label>Data início</label><input type="date" name="dataInicio" required></div>' +
+    '<div class="field"><label>Data fim</label><input type="date" name="dataFim" required></div>' +
+    '<button type="submit">Gerar escala</button>' +
+    '</form>';
+}
+
+function onSubmitGerarEscala(ev) {
+  ev.preventDefault();
+  var f = new FormData(ev.target);
+  try {
+    var escala = gerarEscala(f.get("dataInicio"), f.get("dataFim"));
+    var pendentes = escala.sessoes.filter(function (s) { return s.status === "sem_instrutor"; }).length;
+    if (pendentes) flash("Escala gerada com " + pendentes + " sessão(ões) sem instrutor disponível — revise manualmente.", "warning");
+    else flash("Escala gerada com sucesso — todas as sessões têm instrutor.", "success");
+    navegar("/escalas/" + escala.id);
+  } catch (e) { flash("Não foi possível gerar a escala: " + e.message, "danger"); }
+}
+
+/* ---------- Instrutores ---------- */
+
+function renderInstrutoresList() {
+  var linhas = DB.instrutores.slice().sort(function (a, b) { return a.nome.localeCompare(b.nome); }).map(function (i) {
+    return '<tr>' +
+      '<td><a href="#/instrutores/' + i.id + '">' + escapeHtml(i.nome) + '</a></td>' +
+      '<td>' + categoriasDoInstrutor(i).map(function (c) { return '<span class="badge">' + escapeHtml(c) + '</span> '; }).join("") + '</td>' +
+      '<td>' + (i.cargaHorariaSemanalMax || "—") + '</td>' +
+      '<td>' + (i.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge">Inativo</span>') + '</td>' +
+      '<td style="text-align:right"><a class="btn btn-sm btn-outline" href="#/instrutores/' + i.id + '/editar">Editar</a></td>' +
+      '</tr>';
+  }).join("");
+
+  app.innerHTML =
+    '<div class="toolbar"><h1 style="margin:0">Instrutores</h1><a class="btn" href="#/instrutores/novo">Novo instrutor</a></div>' +
+    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Categorias</th><th>Carga máx./semana</th><th>Status</th><th></th></tr></thead>' +
+    '<tbody>' + (linhas || '<tr><td colspan="5" class="empty">Nenhum instrutor cadastrado ainda.</td></tr>') + '</tbody></table></div></div>';
+}
+
+function renderInstrutorForm(id) {
+  var instrutor = id ? instrutorPorId(id) : null;
+  if (id && !instrutor) { flash("Instrutor não encontrado.", "danger"); navegar("/instrutores"); return; }
+
+  app.innerHTML =
+    '<h1>' + (instrutor ? "Editar" : "Novo") + ' instrutor</h1>' +
+    '<div class="card" style="max-width:640px;">' +
+    '<form id="form-instrutor">' +
+      '<div class="field"><label>Nome *</label><input type="text" name="nome" value="' + escapeHtml(instrutor ? instrutor.nome : "") + '" required></div>' +
+      '<div class="grid-2">' +
+        '<div class="field"><label>E-mail</label><input type="email" name="email" value="' + escapeHtml(instrutor && instrutor.email || "") + '"></div>' +
+        '<div class="field"><label>Telefone</label><input type="text" name="telefone" value="' + escapeHtml(instrutor && instrutor.telefone || "") + '"></div>' +
+      '</div>' +
+      '<div class="field"><label>Carga horária máxima semanal (horas)</label><input type="number" min="1" name="cargaHorariaSemanalMax" value="' + (instrutor && instrutor.cargaHorariaSemanalMax || "") + '">' +
+      '<div class="small muted">Opcional — usado para balancear a escala. Deixe em branco para não limitar.</div></div>' +
+      (instrutor ? '<div class="field"><label><input type="checkbox" name="ativo" style="width:auto;display:inline-block;margin-right:0.4rem;" ' + (instrutor.ativo ? "checked" : "") + '> Ativo (disponível para receber cursos na escala)</label></div>' : '') +
+      '<button type="submit">Salvar</button> ' +
+      (instrutor ? '<a class="btn btn-link" href="#/instrutores/' + instrutor.id + '">Cancelar</a>' : '') +
+    '</form></div>';
+
+  document.getElementById("form-instrutor").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    var nome = (f.get("nome") || "").trim();
+    if (!nome) { flash("Nome é obrigatório.", "danger"); return; }
+    var salvo = salvarInstrutor({
+      nome: nome, email: f.get("email"), telefone: f.get("telefone"),
+      cargaHorariaSemanalMax: f.get("cargaHorariaSemanalMax"),
+      ativo: instrutor ? f.get("ativo") === "on" : true
+    }, instrutor ? instrutor.id : null);
+    flash(instrutor ? "Instrutor atualizado." : "Instrutor cadastrado com sucesso.", "success");
+    navegar("/instrutores/" + salvo.id);
+  });
+}
+
+function renderInstrutorDetalhe(id) {
+  var instrutor = instrutorPorId(id);
+  if (!instrutor) { flash("Instrutor não encontrado.", "danger"); navegar("/instrutores"); return; }
+
+  var qualificacoesHtml = instrutor.qualificacoes.map(function (q) {
+    return '<li>' + escapeHtml(q.categoria) + '<button class="btn btn-sm btn-danger" onclick="AppActions.removerQualificacao(' + instrutor.id + ',' + q.id + ')">Remover</button></li>';
+  }).join("") || '<li class="muted">Nenhuma qualificação cadastrada.</li>';
+
+  var bloqueiosHtml = instrutor.bloqueios.map(function (b) {
+    return '<li><span>' + formatDateBR(b.dataInicio) + ' a ' + formatDateBR(b.dataFim) + (b.motivo ? ' — ' + escapeHtml(b.motivo) : '') + '</span>' +
+      '<button class="btn btn-sm btn-danger" onclick="AppActions.removerBloqueio(' + instrutor.id + ',' + b.id + ')">Remover</button></li>';
+  }).join("") || '<li class="muted">Nenhum bloqueio cadastrado.</li>';
+
+  var dispHtml = instrutor.disponibilidades.map(function (d) {
+    return '<li><span>' + DIAS_SEMANA_MAP[d.diaSemana] + ' — ' + d.horaInicio + ' às ' + d.horaFim + '</span>' +
+      '<button class="btn btn-sm btn-danger" onclick="AppActions.removerDisponibilidade(' + instrutor.id + ',' + d.id + ')">Remover</button></li>';
+  }).join("") || '<li class="muted">Nenhuma janela cadastrada (disponível sempre, exceto bloqueios).</li>';
+
+  var diasOptions = DIAS_SEMANA.map(function (d) { return '<option value="' + d[0] + '">' + d[1] + '</option>'; }).join("");
+
+  app.innerHTML =
+    '<div class="toolbar"><h1 style="margin:0">' + escapeHtml(instrutor.nome) + '</h1><a class="btn btn-outline btn-sm" href="#/instrutores/' + instrutor.id + '/editar">Editar dados</a></div>' +
+    '<div class="layout-2col">' +
+      '<div>' +
+        '<div class="card">' +
+          '<h2>Qualificações (categorias de curso)</h2>' +
+          '<p class="muted small">O instrutor só recebe cursos cuja categoria bata exatamente com uma destas.</p>' +
+          '<ul class="list-plain">' + qualificacoesHtml + '</ul>' +
+          '<form id="form-qualificacao" class="form-inline">' +
+            '<div class="field"><input type="text" name="categoria" placeholder="ex: Curso Livre - Direção Defensiva" required></div>' +
+            '<button type="submit">Adicionar</button>' +
+          '</form>' +
+        '</div>' +
+        '<div class="card">' +
+          '<h2>Bloqueios (férias, folgas, atestados)</h2>' +
+          '<ul class="list-plain">' + bloqueiosHtml + '</ul>' +
+          '<form id="form-bloqueio" class="grid-3">' +
+            '<div class="field"><label>Data início</label><input type="date" name="dataInicio" required></div>' +
+            '<div class="field"><label>Data fim</label><input type="date" name="dataFim" required></div>' +
+            '<div class="field"><label>Motivo</label><input type="text" name="motivo" placeholder="(opcional)"></div>' +
+            '<div class="field" style="grid-column:1 / -1"><button type="submit">Adicionar bloqueio</button></div>' +
+          '</form>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="card">' +
+          '<h2>Disponibilidade semanal</h2>' +
+          '<p class="muted small">Usada para cursos fixos e livres. Sem cadastro, o instrutor fica disponível sempre (exceto bloqueios).</p>' +
+          '<ul class="list-plain">' + dispHtml + '</ul>' +
+          '<form id="form-disponibilidade">' +
+            '<div class="field"><label>Dia da semana</label><select name="diaSemana">' + diasOptions + '</select></div>' +
+            '<div class="grid-2">' +
+              '<div class="field"><label>Início</label><input type="time" name="horaInicio" required></div>' +
+              '<div class="field"><label>Fim</label><input type="time" name="horaFim" required></div>' +
+            '</div>' +
+            '<button type="submit" class="btn-block">Adicionar janela</button>' +
+          '</form>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById("form-qualificacao").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var categoria = (new FormData(ev.target).get("categoria") || "").trim();
+    if (!categoria) return;
+    instrutor.qualificacoes.push({ id: newId(), categoria: categoria });
+    saveDB(); flash("Qualificação adicionada.", "success"); render();
+  });
+
+  document.getElementById("form-bloqueio").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    var dataInicio = f.get("dataInicio"), dataFim = f.get("dataFim");
+    if (dataInicio > dataFim) { flash("data_inicio deve ser antes ou igual a data_fim.", "danger"); return; }
+    instrutor.bloqueios.push({ id: newId(), dataInicio: dataInicio, dataFim: dataFim, motivo: f.get("motivo") || null });
+    saveDB(); flash("Bloqueio adicionado.", "success"); render();
+  });
+
+  document.getElementById("form-disponibilidade").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    var horaInicio = f.get("horaInicio"), horaFim = f.get("horaFim");
+    if (horaInicio >= horaFim) { flash("hora_inicio deve ser antes de hora_fim.", "danger"); return; }
+    instrutor.disponibilidades.push({ id: newId(), diaSemana: parseInt(f.get("diaSemana"), 10), horaInicio: horaInicio, horaFim: horaFim });
+    saveDB(); flash("Disponibilidade adicionada.", "success"); render();
+  });
+}
+
+var AppActions = {
+  removerQualificacao: function (instrutorId, qId) {
+    var instrutor = instrutorPorId(instrutorId);
+    instrutor.qualificacoes = instrutor.qualificacoes.filter(function (q) { return q.id !== qId; });
+    saveDB(); render();
+  },
+  removerBloqueio: function (instrutorId, bId) {
+    var instrutor = instrutorPorId(instrutorId);
+    instrutor.bloqueios = instrutor.bloqueios.filter(function (b) { return b.id !== bId; });
+    saveDB(); render();
+  },
+  removerDisponibilidade: function (instrutorId, dId) {
+    var instrutor = instrutorPorId(instrutorId);
+    instrutor.disponibilidades = instrutor.disponibilidades.filter(function (d) { return d.id !== dId; });
+    saveDB(); render();
+  },
+  excluirCursoFixo: function (id) {
+    if (!confirm("Excluir este curso fixo?")) return;
+    DB.cursosFixos = DB.cursosFixos.filter(function (c) { return c.id !== id; });
+    saveDB(); flash("Curso fixo removido.", "success"); render();
+  },
+  excluirCursoLivre: function (id) {
+    if (!confirm("Excluir este curso livre?")) return;
+    DB.cursosLivres = DB.cursosLivres.filter(function (c) { return c.id !== id; });
+    saveDB(); flash("Curso livre removido.", "success"); render();
+  },
+  excluirEscala: function (id) {
+    if (!confirm("Excluir esta escala?")) return;
+    DB.escalas = DB.escalas.filter(function (e) { return e.id !== id; });
+    saveDB(); flash("Escala removida.", "success"); navegar("/escalas");
+  },
+  reatribuirSessao: function (escalaId, sessaoId, selectEl) {
+    var escala = escalaPorId(escalaId);
+    var sessao = escala.sessoes.find(function (s) { return s.id === sessaoId; });
+    var valor = selectEl.value;
+    sessao.instrutorId = valor ? parseInt(valor, 10) : null;
+    sessao.status = sessao.instrutorId ? "confirmado" : "sem_instrutor";
+    saveDB(); flash("Sessão atualizada manualmente.", "success"); render();
+  },
+  anexarCursoLivre: function (escalaId) {
+    var escala = escalaPorId(escalaId);
+    var select = document.getElementById("select-anexar-curso-livre");
+    if (!select || !select.value) { flash("Selecione um curso livre para anexar.", "danger"); return; }
+    var curso = cursoLivrePorId(parseInt(select.value, 10));
+    if (escala.sessoes.some(function (s) { return s.cursoLivreId === curso.id; })) {
+      flash("Este curso livre já está anexado a esta escala.", "warning"); return;
+    }
+    var sessao = anexarCursoLivreNaEscala(escala, curso);
+    if (sessao.status === "confirmado") {
+      flash('Curso livre "' + curso.nome + '" anexado e alocado para ' + instrutorPorId(sessao.instrutorId).nome + '.', "success");
+    } else {
+      flash('Curso livre "' + curso.nome + '" anexado, mas nenhum instrutor elegível está disponível — atribua manualmente abaixo.', "warning");
+    }
+    render();
+  },
+  anexarCursoLivreDaLista: function (cursoId, selectEl) {
+    if (!selectEl.value) { flash("Selecione uma escala para anexar o curso.", "danger"); return; }
+    var escala = escalaPorId(parseInt(selectEl.value, 10));
+    var curso = cursoLivrePorId(cursoId);
+    if (escala.sessoes.some(function (s) { return s.cursoLivreId === curso.id; })) {
+      flash("Este curso livre já está anexado a essa escala.", "warning");
+      navegar("/escalas/" + escala.id);
+      return;
+    }
+    var sessao = anexarCursoLivreNaEscala(escala, curso);
+    if (sessao.status === "confirmado") {
+      flash('Curso livre "' + curso.nome + '" anexado e alocado para ' + instrutorPorId(sessao.instrutorId).nome + '.', "success");
+    } else {
+      flash('Curso livre "' + curso.nome + '" anexado, mas nenhum instrutor elegível está disponível — atribua manualmente na tela da escala.', "warning");
+    }
+    navegar("/escalas/" + escala.id);
+  },
+  exportarEscala: function (id) { exportarEscalaCSV(escalaPorId(id)); },
+  resetarDados: function () {
+    if (!confirm("Isso vai apagar TODOS os dados salvos neste navegador (instrutores, cursos e escalas). Continuar?")) return;
+    DB = defaultState(); saveDB(); flash("Dados resetados.", "success"); navegar("/");
+  }
+};
+
+/* ---------- Cursos fixos ---------- */
+
+function renderCursosFixosList() {
+  var linhas = DB.cursosFixos.slice().sort(function (a, b) { return a.nome.localeCompare(b.nome); }).map(function (c) {
+    var titular = c.instrutorFixoId ? instrutorPorId(c.instrutorFixoId) : null;
+    return '<tr>' +
+      '<td>' + escapeHtml(c.nome) + '</td>' +
+      '<td><span class="badge">' + escapeHtml(c.categoria) + '</span></td>' +
+      '<td>' + DIAS_SEMANA_MAP[c.diaSemana] + ' ' + c.horaInicio + '–' + c.horaFim + '</td>' +
+      '<td>' + formatDateBR(c.dataInicio) + ' a ' + formatDateBR(c.dataFim) + '</td>' +
+      '<td>' + (titular ? escapeHtml(titular.nome) : "—") + '</td>' +
+      '<td style="text-align:right;white-space:nowrap">' +
+        '<a class="btn btn-sm btn-outline" href="#/cursos-fixos/' + c.id + '/editar">Editar</a> ' +
+        '<button class="btn btn-sm btn-danger" onclick="AppActions.excluirCursoFixo(' + c.id + ')">Excluir</button>' +
+      '</td></tr>';
+  }).join("");
+
+  app.innerHTML =
+    '<div class="toolbar"><h1 style="margin:0">Cursos Fixos</h1><a class="btn" href="#/cursos-fixos/novo">Novo curso fixo</a></div>' +
+    '<p class="muted">Grade curricular recorrente: turma no mesmo dia da semana e horário durante um período.</p>' +
+    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Curso</th><th>Categoria</th><th>Dia/Horário</th><th>Período</th><th>Instrutor titular</th><th></th></tr></thead>' +
+    '<tbody>' + (linhas || '<tr><td colspan="6" class="empty">Nenhum curso fixo cadastrado ainda.</td></tr>') + '</tbody></table></div></div>';
+}
+
+function renderCursoFixoForm(id) {
+  var curso = id ? cursoFixoPorId(id) : null;
+  if (id && !curso) { flash("Curso fixo não encontrado.", "danger"); navegar("/cursos-fixos"); return; }
+  var diasOptions = DIAS_SEMANA.map(function (d) {
+    return '<option value="' + d[0] + '"' + (curso && curso.diaSemana === d[0] ? " selected" : "") + '>' + d[1] + '</option>';
+  }).join("");
+  var instrutoresOptions = '<option value="">— definir automaticamente na escala —</option>' +
+    DB.instrutores.filter(function (i) { return i.ativo; }).map(function (i) {
+      return '<option value="' + i.id + '"' + (curso && curso.instrutorFixoId === i.id ? " selected" : "") + '>' + escapeHtml(i.nome) + '</option>';
+    }).join("");
+
+  app.innerHTML =
+    '<h1>' + (curso ? "Editar" : "Novo") + ' curso fixo</h1>' +
+    '<div class="card" style="max-width:760px;"><form id="form-curso-fixo">' +
+      '<div class="grid-2">' +
+        '<div class="field"><label>Nome do curso *</label><input type="text" name="nome" value="' + escapeHtml(curso ? curso.nome : "") + '" required></div>' +
+        '<div class="field"><label>Categoria *</label><input type="text" name="categoria" value="' + escapeHtml(curso ? curso.categoria : "") + '" placeholder="deve bater com a qualificação do instrutor" required></div>' +
+      '</div>' +
+      '<div class="grid-3">' +
+        '<div class="field"><label>Dia da semana *</label><select name="diaSemana">' + diasOptions + '</select></div>' +
+        '<div class="field"><label>Hora início *</label><input type="time" name="horaInicio" value="' + (curso ? curso.horaInicio : "") + '" required></div>' +
+        '<div class="field"><label>Hora fim *</label><input type="time" name="horaFim" value="' + (curso ? curso.horaFim : "") + '" required></div>' +
+      '</div>' +
+      '<div class="grid-3">' +
+        '<div class="field"><label>Data início *</label><input type="date" name="dataInicio" value="' + (curso ? curso.dataInicio : "") + '" required></div>' +
+        '<div class="field"><label>Data fim *</label><input type="date" name="dataFim" value="' + (curso ? curso.dataFim : "") + '" required></div>' +
+        '<div class="field"><label>Carga horária total (h)</label><input type="number" min="1" name="cargaHoraria" value="' + (curso && curso.cargaHoraria || "") + '"></div>' +
+      '</div>' +
+      '<div class="grid-2">' +
+        '<div class="field"><label>Vagas</label><input type="number" min="1" name="vagas" value="' + (curso && curso.vagas || "") + '"></div>' +
+        '<div class="field"><label>Instrutor titular (opcional)</label><select name="instrutorFixoId">' + instrutoresOptions + '</select>' +
+        '<div class="small muted">Se definido, este instrutor é priorizado sempre que estiver disponível.</div></div>' +
+      '</div>' +
+      '<button type="submit">Salvar</button> <a class="btn btn-link" href="#/cursos-fixos">Cancelar</a>' +
+    '</form></div>';
+
+  document.getElementById("form-curso-fixo").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    try {
+      var salvo = salvarCursoFixo({
+        nome: f.get("nome").trim(), categoria: f.get("categoria").trim(),
+        cargaHoraria: f.get("cargaHoraria"), diaSemana: f.get("diaSemana"),
+        horaInicio: f.get("horaInicio"), horaFim: f.get("horaFim"),
+        dataInicio: f.get("dataInicio"), dataFim: f.get("dataFim"),
+        vagas: f.get("vagas"), instrutorFixoId: f.get("instrutorFixoId")
+      }, curso ? curso.id : null);
+      flash(curso ? "Curso fixo atualizado." : "Curso fixo cadastrado.", "success");
+      navegar("/cursos-fixos");
+    } catch (e) { flash("Não foi possível salvar: " + e.message, "danger"); }
+  });
+}
+
+/* ---------- Cursos livres ---------- */
+
+function renderCursosLivresList() {
+  var escalasOrdenadas = DB.escalas.slice().reverse();
+  var linhas = DB.cursosLivres.slice().sort(function (a, b) { return a.data.localeCompare(b.data); }).map(function (c) {
+    var anexarHtml;
+    if (escalasOrdenadas.length) {
+      var opts = escalasOrdenadas.map(function (e) {
+        return '<option value="' + e.id + '">' + formatDateBR(e.dataInicio) + ' a ' + formatDateBR(e.dataFim) + '</option>';
+      }).join("");
+      anexarHtml = '<div class="form-inline" style="gap:0.3rem;flex-wrap:nowrap">' +
+        '<select id="select-anexar-livre-' + c.id + '" style="min-width:160px">' + opts + '</select>' +
+        '<button class="btn btn-sm btn-outline" onclick="AppActions.anexarCursoLivreDaLista(' + c.id + ', document.getElementById(\'select-anexar-livre-' + c.id + '\'))">Anexar</button>' +
+      '</div>';
+    } else {
+      anexarHtml = '<span class="muted small">Gere uma escala primeiro</span>';
+    }
+    return '<tr>' +
+      '<td>' + escapeHtml(c.nome) + '</td>' +
+      '<td><span class="badge">' + escapeHtml(c.categoria) + '</span></td>' +
+      '<td>' + formatDateBR(c.data) + '</td>' +
+      '<td>' + c.horaInicio + '–' + c.horaFim + '</td>' +
+      '<td style="min-width:220px">' + anexarHtml + '</td>' +
+      '<td style="text-align:right;white-space:nowrap">' +
+        '<a class="btn btn-sm btn-outline" href="#/cursos-livres/' + c.id + '/editar">Editar</a> ' +
+        '<button class="btn btn-sm btn-danger" onclick="AppActions.excluirCursoLivre(' + c.id + ')">Excluir</button>' +
+      '</td></tr>';
+  }).join("");
+
+  app.innerHTML =
+    '<div class="toolbar"><h1 style="margin:0">Cursos Livres</h1><a class="btn" href="#/cursos-livres/novo">Novo curso livre</a></div>' +
+    '<p class="muted">Turmas avulsas, com data específica, abertas sob demanda.</p>' +
+    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Curso</th><th>Categoria</th><th>Data</th><th>Horário</th><th>Anexar a uma escala</th><th></th></tr></thead>' +
+    '<tbody>' + (linhas || '<tr><td colspan="6" class="empty">Nenhum curso livre cadastrado ainda.</td></tr>') + '</tbody></table></div></div>';
+}
+
+function renderCursoLivreForm(id) {
+  var curso = id ? cursoLivrePorId(id) : null;
+  if (id && !curso) { flash("Curso livre não encontrado.", "danger"); navegar("/cursos-livres"); return; }
+
+  app.innerHTML =
+    '<h1>' + (curso ? "Editar" : "Novo") + ' curso livre</h1>' +
+    '<div class="card" style="max-width:640px;"><form id="form-curso-livre">' +
+      '<div class="grid-2">' +
+        '<div class="field"><label>Nome do curso *</label><input type="text" name="nome" value="' + escapeHtml(curso ? curso.nome : "") + '" required></div>' +
+        '<div class="field"><label>Categoria *</label><input type="text" name="categoria" value="' + escapeHtml(curso ? curso.categoria : "") + '" placeholder="deve bater com a qualificação do instrutor" required></div>' +
+      '</div>' +
+      '<div class="grid-3">' +
+        '<div class="field"><label>Data *</label><input type="date" name="data" value="' + (curso ? curso.data : "") + '" required></div>' +
+        '<div class="field"><label>Hora início *</label><input type="time" name="horaInicio" value="' + (curso ? curso.horaInicio : "") + '" required></div>' +
+        '<div class="field"><label>Hora fim *</label><input type="time" name="horaFim" value="' + (curso ? curso.horaFim : "") + '" required></div>' +
+      '</div>' +
+      '<div class="grid-2">' +
+        '<div class="field"><label>Carga horária (h)</label><input type="number" min="1" name="cargaHoraria" value="' + (curso && curso.cargaHoraria || "") + '"></div>' +
+        '<div class="field"><label>Vagas</label><input type="number" min="1" name="vagas" value="' + (curso && curso.vagas || "") + '"></div>' +
+      '</div>' +
+      '<button type="submit">Salvar</button> <a class="btn btn-link" href="#/cursos-livres">Cancelar</a>' +
+    '</form></div>';
+
+  document.getElementById("form-curso-livre").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    try {
+      salvarCursoLivre({
+        nome: f.get("nome").trim(), categoria: f.get("categoria").trim(),
+        cargaHoraria: f.get("cargaHoraria"), data: f.get("data"),
+        horaInicio: f.get("horaInicio"), horaFim: f.get("horaFim"), vagas: f.get("vagas")
+      }, curso ? curso.id : null);
+      flash(curso ? "Curso livre atualizado." : "Curso livre cadastrado.", "success");
+      navegar("/cursos-livres");
+    } catch (e) { flash("Não foi possível salvar: " + e.message, "danger"); }
+  });
+}
+
+/* ---------- Escalas ---------- */
+
+function renderEscalasList() {
+  var linhas = DB.escalas.slice().reverse().map(function (e) {
+    var pendentes = e.sessoes.filter(function (s) { return s.status === "sem_instrutor"; }).length;
+    return '<tr>' +
+      '<td><a href="#/escalas/' + e.id + '">' + formatDateBR(e.dataInicio) + ' a ' + formatDateBR(e.dataFim) + '</a></td>' +
+      '<td>' + e.sessoes.length + '</td>' +
+      '<td>' + (pendentes ? '<span class="badge badge-danger">' + pendentes + '</span>' : '<span class="badge badge-success">0</span>') + '</td>' +
+      '<td>' + new Date(e.criadaEm).toLocaleString("pt-BR") + '</td>' +
+      '<td style="text-align:right"><button class="btn btn-sm btn-danger" onclick="AppActions.excluirEscala(' + e.id + ')">Excluir</button></td>' +
+      '</tr>';
+  }).join("");
+
+  app.innerHTML =
+    '<h1>Escalas geradas</h1>' +
+    '<div class="card"><h2>Gerar nova escala</h2>' + formGerarEscala() + '</div>' +
+    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Período</th><th>Sessões</th><th>Sem instrutor</th><th>Criada em</th><th></th></tr></thead>' +
+    '<tbody>' + (linhas || '<tr><td colspan="5" class="empty">Nenhuma escala gerada ainda.</td></tr>') + '</tbody></table></div></div>';
+
+  document.getElementById("form-gerar-escala").addEventListener("submit", onSubmitGerarEscala);
+}
+
+function renderEscalaVer(id) {
+  var escala = escalaPorId(id);
+  if (!escala) { flash("Escala não encontrada.", "danger"); navegar("/escalas"); return; }
+
+  var porDia = {};
+  escala.sessoes.forEach(function (s) { (porDia[s.data] = porDia[s.data] || []).push(s); });
+  var dias = Object.keys(porDia).sort();
+
+  var instrutoresAtivos = DB.instrutores.filter(function (i) { return i.ativo; }).sort(function (a, b) { return a.nome.localeCompare(b.nome); });
+
+  var diasHtml = dias.map(function (data) {
+    var sessoes = porDia[data].slice().sort(function (a, b) { return a.horaInicio.localeCompare(b.horaInicio); });
+    var linhasSessoes = sessoes.map(function (s) {
+      var optsInstrutor = '<option value="">— sem instrutor —</option>' + instrutoresAtivos.map(function (i) {
+        return '<option value="' + i.id + '"' + (s.instrutorId === i.id ? " selected" : "") + '>' + escapeHtml(i.nome) + '</option>';
+      }).join("");
+      return '<tr>' +
+        '<td>' + s.horaInicio + '–' + s.horaFim + '</td>' +
+        '<td>' + escapeHtml(s.nomeCurso) + '</td>' +
+        '<td><span class="badge">' + escapeHtml(s.categoria) + '</span></td>' +
+        '<td>' + (s.origem === "fixo" ? "Fixo" : "Livre") + '</td>' +
+        '<td style="min-width:200px"><select onchange="AppActions.reatribuirSessao(' + escala.id + ',' + s.id + ',this)">' + optsInstrutor + '</select></td>' +
+        '<td>' + (s.status === "confirmado" ? '<span class="badge badge-success">Confirmado</span>' : '<span class="badge badge-danger">Sem instrutor</span>') + '</td>' +
+        '</tr>';
+    }).join("");
+    return '<div class="card"><h2 class="small" style="text-transform:uppercase;color:var(--text-muted)">' + DIAS_SEMANA_MAP[diaSemanaISO(data)] + ', ' + formatDateBR(data) + '</h2>' +
+      '<div class="table-wrap"><table><thead><tr><th>Horário</th><th>Curso</th><th>Categoria</th><th>Origem</th><th>Instrutor</th><th>Status</th></tr></thead>' +
+      '<tbody>' + linhasSessoes + '</tbody></table></div></div>';
+  }).join("") || '<div class="card empty">Nenhuma sessão nesta escala ainda. Cursos fixos do período aparecem aqui automaticamente; anexe cursos livres ao lado.</div>';
+
+  var idsAnexados = {};
+  escala.sessoes.forEach(function (s) { if (s.cursoLivreId) idsAnexados[s.cursoLivreId] = true; });
+  var livresDisponiveis = DB.cursosLivres.filter(function (c) { return !idsAnexados[c.id]; }).sort(function (a, b) { return a.data.localeCompare(b.data); });
+
+  var horasPorInstrutor = {};
+  escala.sessoes.forEach(function (s) {
+    if (!s.instrutorId) return;
+    var nome = instrutorPorId(s.instrutorId).nome;
+    horasPorInstrutor[nome] = (horasPorInstrutor[nome] || 0) + duracaoHoras(s.horaInicio, s.horaFim);
+  });
+  var horasOrdenadas = Object.keys(horasPorInstrutor).map(function (n) { return [n, horasPorInstrutor[n]]; }).sort(function (a, b) { return b[1] - a[1]; });
+
+  app.innerHTML =
+    '<div class="toolbar"><h1 style="margin:0">Escala de ' + formatDateBR(escala.dataInicio) + ' a ' + formatDateBR(escala.dataFim) + '</h1>' +
+    '<button class="btn btn-outline" onclick="AppActions.exportarEscala(' + escala.id + ')">Exportar CSV</button></div>' +
+    '<div class="layout-2col">' +
+      '<div>' + diasHtml + '</div>' +
+      '<div>' +
+        '<div class="card">' +
+          '<h2>Anexar curso livre</h2>' +
+          '<p class="muted small">Cursos livres não entram automaticamente — escolha entre os cadastrados e anexe à escala.</p>' +
+          (livresDisponiveis.length ?
+            '<select id="select-anexar-curso-livre">' +
+              '<option value="" disabled selected>Selecione um curso livre…</option>' +
+              livresDisponiveis.map(function (c) { return '<option value="' + c.id + '">' + escapeHtml(c.nome) + ' — ' + formatDateBR(c.data) + ' ' + c.horaInicio + '–' + c.horaFim + '</option>'; }).join("") +
+            '</select>' +
+            '<button class="btn-block" style="margin-top:0.5rem" onclick="AppActions.anexarCursoLivre(' + escala.id + ')">Anexar curso livre</button>'
+            : '<p class="muted small" style="margin:0">Todos os cursos livres cadastrados já estão anexados, ou nenhum foi cadastrado ainda. <a href="#/cursos-livres/novo">Cadastrar novo</a>.</p>') +
+        '</div>' +
+        '<div class="card"><h2>Carga horária por instrutor</h2><ul class="list-plain">' +
+          (horasOrdenadas.map(function (kv) { return '<li><span>' + escapeHtml(kv[0]) + '</span><strong>' + kv[1].toFixed(1) + 'h</strong></li>'; }).join("") || '<li class="muted">Nenhuma alocação ainda.</li>') +
+        '</ul></div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------- Importar ---------- */
+
+function renderImportar() {
+  app.innerHTML =
+    '<h1>Importar dados (CSV)</h1>' +
+    '<p class="muted">Importe instrutores e cursos a partir de uma planilha CSV &mdash; por exemplo, exportada do SIGOP ou preenchida manualmente.</p>' +
+    '<div class="card" style="max-width:640px;">' +
+      '<form id="form-importar">' +
+        '<div class="field"><label>O que você está importando? *</label><select name="tipo">' +
+          '<option value="instrutores">Instrutores</option>' +
+          '<option value="cursos_fixos">Cursos fixos</option>' +
+          '<option value="cursos_livres">Cursos livres</option>' +
+        '</select></div>' +
+        '<div class="field"><label>Arquivo (.csv) *</label><input type="file" name="arquivo" accept=".csv" required></div>' +
+        '<button type="submit">Importar</button>' +
+      '</form>' +
+    '</div>' +
+    '<div class="card" style="max-width:640px;">' +
+      '<h2 class="small" style="text-transform:uppercase;color:var(--text-muted)">Modelos de planilha</h2>' +
+      '<ul>' +
+        '<li><a href="#" onclick="AppActions_baixarModelo(\'instrutores\');return false;">exemplo_instrutores.csv</a> — colunas: nome, email, telefone, categorias (separadas por ";"), carga_horaria_semanal_max</li>' +
+        '<li><a href="#" onclick="AppActions_baixarModelo(\'cursos_fixos\');return false;">exemplo_cursos_fixos.csv</a> — colunas: nome, categoria, carga_horaria, dia_semana, hora_inicio, hora_fim, data_inicio, data_fim, vagas, instrutor</li>' +
+        '<li><a href="#" onclick="AppActions_baixarModelo(\'cursos_livres\');return false;">exemplo_cursos_livres.csv</a> — colunas: nome, categoria, carga_horaria, data, hora_inicio, hora_fim, vagas</li>' +
+      '</ul>' +
+    '</div>' +
+    '<div class="card" style="max-width:640px;">' +
+      '<h2 class="small" style="text-transform:uppercase;color:var(--text-muted)">Testar rapidamente</h2>' +
+      '<p class="muted small">Carrega 3 instrutores, 2 cursos fixos e 2 cursos livres de exemplo, para você já ver o sistema funcionando.</p>' +
+      '<button type="button" class="btn-secondary" onclick="carregarDadosExemplo()">Carregar dados de exemplo</button>' +
+    '</div>' +
+    '<div class="card" style="max-width:640px;border:1px solid var(--danger-bg)">' +
+      '<h2 class="small" style="text-transform:uppercase;color:var(--danger)">Zona de risco</h2>' +
+      '<p class="muted small">Apaga instrutores, cursos e escalas salvos neste navegador.</p>' +
+      '<button type="button" class="btn-danger" onclick="AppActions.resetarDados()">Resetar todos os dados</button>' +
+    '</div>';
+
+  document.getElementById("form-importar").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var f = new FormData(ev.target);
+    var tipo = f.get("tipo");
+    var arquivo = f.get("arquivo");
+    if (!arquivo || !arquivo.name) { flash("Selecione um arquivo CSV.", "danger"); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var rows = parseCSV(String(reader.result));
+        var resultado;
+        if (tipo === "instrutores") resultado = importarInstrutoresCSV(rows);
+        else if (tipo === "cursos_fixos") resultado = importarCursosFixosCSV(rows);
+        else resultado = importarCursosLivresCSV(rows);
+
+        if (resultado.criados) flash(resultado.criados + " registro(s) importado(s) com sucesso.", "success");
+        if (resultado.erros.length) flash("Algumas linhas tiveram problemas: " + resultado.erros.slice(0, 10).join(" | "), "warning");
+
+        var destino = tipo === "instrutores" ? "/instrutores" : tipo === "cursos_fixos" ? "/cursos-fixos" : "/cursos-livres";
+        navegar(destino);
+      } catch (e) { flash("Falha ao ler o arquivo: " + e.message, "danger"); }
+    };
+    reader.readAsText(arquivo, "utf-8");
+  });
+}
+
+function AppActions_baixarModelo(tipo) {
+  downloadTextFile("exemplo_" + tipo + ".csv", "text/csv;charset=utf-8", MODELOS_CSV[tipo]);
+}
+</script>
+</body>
+</html>

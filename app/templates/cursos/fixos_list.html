@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Cursos Fixos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Cursos Fixos</h1>
+  <a href="{{ url_for('cursos.novo_fixo') }}" class="btn btn-primary">Novo curso fixo</a>
+</div>
+<p class="text-muted">Grade curricular recorrente: turma no mesmo dia da semana e horário durante um período.</p>
+
+<div class="card p-3">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Curso</th>
+        <th>Categoria</th>
+        <th>Dia/Horário</th>
+        <th>Período</th>
+        <th>Instrutor titular</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for curso in cursos %}
+      <tr>
+        <td>{{ curso.nome }}</td>
+        <td><span class="badge bg-secondary">{{ curso.categoria }}</span></td>
+        <td>{{ dias_semana[curso.dia_semana] }} {{ curso.hora_inicio.strftime("%H:%M") }}–{{ curso.hora_fim.strftime("%H:%M") }}</td>
+        <td>{{ curso.data_inicio }} a {{ curso.data_fim }}</td>
+        <td>{{ curso.instrutor_fixo.nome if curso.instrutor_fixo else "—" }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('cursos.editar_fixo', curso_id=curso.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+          <form method="post" action="{{ url_for('cursos.excluir_fixo', curso_id=curso.id) }}" class="d-inline" onsubmit="return confirm('Excluir este curso fixo?');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Nenhum curso fixo cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
