@@ -50,14 +50,30 @@ Acesse http://localhost:5000. O banco (SQLite) é criado automaticamente em `ins
 
 ## Importação de dados (ex: a partir do SIGOP)
 
-A tela **Importar** aceita planilhas CSV ou Excel para instrutores, cursos fixos e cursos livres. Os modelos
-de coluna esperados estão em `data/exemplo_instrutores.csv`, `data/exemplo_cursos_fixos.csv` e
-`data/exemplo_cursos_livres.csv` (também disponíveis para download na própria tela de importação).
+A tela **Importar** aceita arquivos **CSV, Excel (.xlsx/.xls), Word (.docx) ou PDF** para instrutores,
+cursos fixos e cursos livres — pensada para receber qualquer exportação que você conseguir tirar do SIGOP,
+sem precisar bater exatamente as colunas:
 
-Hoje a integração é via planilha porque não foi confirmada uma API pública para o SIGOP usado pela empresa
-(`sigop.sestsenat.org.br`). Se uma API ou acesso ao banco de dados do SIGOP for viabilizado futuramente,
-a importação pode ser adaptada para buscar os dados diretamente, sem mudar o restante do sistema — o motor
-de geração de escala (`app/scheduler.py`) e os modelos (`app/models.py`) já são independentes da origem dos dados.
+- **Cabeçalhos não precisam ser exatos**: o sistema reconhece variações comuns de nome de coluna (ex:
+  "Nome do Curso", "Curso" e "Descrição" mapeiam todos para o campo `nome`; veja a lista de sinônimos em
+  `CAMPO_SINONIMOS`, em `app/import_data.py`).
+- **Detecção automática do tipo**: por padrão, a tela tenta identificar sozinha se o arquivo é uma lista de
+  instrutores, cursos fixos ou cursos livres, com base em quais colunas foram reconhecidas. Se não conseguir
+  (colunas ambíguas ou não reconhecidas), pede para você escolher manualmente.
+- **PDF e Word**: só são lidos quando o arquivo tem uma **tabela de verdade** (células, não texto corrido) —
+  funciona bem com relatórios/exportações tabulares, não com documentos escaneados ou em prosa.
+
+Os modelos de coluna (em CSV) estão em `data/exemplo_instrutores.csv`, `data/exemplo_cursos_fixos.csv` e
+`data/exemplo_cursos_livres.csv` (também disponíveis para download na própria tela de importação) — as mesmas
+colunas (com nomes parecidos) funcionam nos outros formatos.
+
+Essa importação por arquivo existe porque não foi confirmada uma API pública para o SIGOP usado pela empresa
+(`sigop.sestsenat.org.br`). Se uma API ou acesso ao banco de dados do SIGOP for viabilizado futuramente, dá
+para adaptar para buscar os dados diretamente, sem mudar o restante do sistema — o motor de geração de escala
+(`app/scheduler.py`) e os modelos (`app/models.py`) já são independentes da origem dos dados.
+
+> A versão standalone (`standalone/index.html`) só aceita **CSV** na importação — processar Excel/Word/PDF
+> direto no navegador, sem backend, exigiria embutir bibliotecas pesadas no arquivo único.
 
 ## Estrutura do projeto
 
@@ -65,7 +81,7 @@ de geração de escala (`app/scheduler.py`) e os modelos (`app/models.py`) já s
 app/
   models.py         modelos de dados (instrutor, curso fixo, curso livre, escala, sessão)
   scheduler.py       motor de geração de escala
-  import_data.py    importação de planilhas CSV/Excel
+  import_data.py    importação de CSV/Excel/Word/PDF (mapeamento de colunas + detecção automática de tipo)
   routes/            rotas Flask (dashboard, instrutores, cursos, escala, importar)
   templates/          páginas HTML
 data/                 planilhas de exemplo para importação
