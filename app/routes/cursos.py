@@ -2,7 +2,8 @@ from datetime import datetime
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from app.models import DIAS_SEMANA, CursoFixo, CursoLivre, Instrutor, db
+from app.models import DIAS_SEMANA, CursoFixo, CursoLivre, Escala, Instrutor, db
+from app.scheduler import anexar_curso_livre
 
 bp = Blueprint("cursos", __name__)
 
@@ -109,7 +110,8 @@ def excluir_fixo(curso_id):
 @bp.route("/cursos-livres")
 def listar_livres():
     cursos = CursoLivre.query.order_by(CursoLivre.data).all()
-    return render_template("cursos/livres_list.html", cursos=cursos)
+    escalas = Escala.query.order_by(Escala.id.desc()).all()
+    return render_template("cursos/livres_list.html", cursos=cursos, escalas=escalas)
 
 
 @bp.route("/cursos-livres/novo", methods=["GET", "POST"])
@@ -167,3 +169,28 @@ def excluir_livre(curso_id):
     db.session.commit()
     flash("Curso livre removido.", "success")
     return redirect(url_for("cursos.listar_livres"))
+
+
+@bp.route("/cursos-livres/<int:curso_id>/anexar", methods=["POST"])
+def anexar_livre_a_escala(curso_id):
+    curso = CursoLivre.query.get_or_404(curso_id)
+    escala_id = request.form.get("escala_id")
+    if not escala_id:
+        flash("Selecione uma escala para anexar o curso.", "danger")
+        return redirect(url_for("cursos.listar_livres"))
+
+    escala = Escala.query.get_or_404(int(escala_id))
+    if any(s.curso_livre_id == curso.id for s in escala.sessoes):
+        flash("Este curso livre já está anexado a essa escala.", "warning")
+        return redirect(url_for("escala.ver", escala_id=escala.id))
+
+    sessao = anexar_curso_livre(escala, curso)
+    if sessao.status == "confirmado":
+        flash(f'Curso livre "{curso.nome}" anexado e alocado para {sessao.instrutor.nome}.', "success")
+    else:
+        flash(
+            f'Curso livre "{curso.nome}" anexado, mas nenhum instrutor elegível está disponível — '
+            "atribua manualmente na tela da escala.",
+            "warning",
+        )
+    return redirect(url_for("escala.ver", escala_id=escala.id))

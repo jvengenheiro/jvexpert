@@ -993,6 +993,23 @@ var AppActions = {
     }
     render();
   },
+  anexarCursoLivreDaLista: function (cursoId, selectEl) {
+    if (!selectEl.value) { flash("Selecione uma escala para anexar o curso.", "danger"); return; }
+    var escala = escalaPorId(parseInt(selectEl.value, 10));
+    var curso = cursoLivrePorId(cursoId);
+    if (escala.sessoes.some(function (s) { return s.cursoLivreId === curso.id; })) {
+      flash("Este curso livre já está anexado a essa escala.", "warning");
+      navegar("/escalas/" + escala.id);
+      return;
+    }
+    var sessao = anexarCursoLivreNaEscala(escala, curso);
+    if (sessao.status === "confirmado") {
+      flash('Curso livre "' + curso.nome + '" anexado e alocado para ' + instrutorPorId(sessao.instrutorId).nome + '.', "success");
+    } else {
+      flash('Curso livre "' + curso.nome + '" anexado, mas nenhum instrutor elegível está disponível — atribua manualmente na tela da escala.', "warning");
+    }
+    navegar("/escalas/" + escala.id);
+  },
   exportarEscala: function (id) { exportarEscalaCSV(escalaPorId(id)); },
   resetarDados: function () {
     if (!confirm("Isso vai apagar TODOS os dados salvos neste navegador (instrutores, cursos e escalas). Continuar?")) return;
@@ -1080,12 +1097,26 @@ function renderCursoFixoForm(id) {
 /* ---------- Cursos livres ---------- */
 
 function renderCursosLivresList() {
+  var escalasOrdenadas = DB.escalas.slice().reverse();
   var linhas = DB.cursosLivres.slice().sort(function (a, b) { return a.data.localeCompare(b.data); }).map(function (c) {
+    var anexarHtml;
+    if (escalasOrdenadas.length) {
+      var opts = escalasOrdenadas.map(function (e) {
+        return '<option value="' + e.id + '">' + formatDateBR(e.dataInicio) + ' a ' + formatDateBR(e.dataFim) + '</option>';
+      }).join("");
+      anexarHtml = '<div class="form-inline" style="gap:0.3rem;flex-wrap:nowrap">' +
+        '<select id="select-anexar-livre-' + c.id + '" style="min-width:160px">' + opts + '</select>' +
+        '<button class="btn btn-sm btn-outline" onclick="AppActions.anexarCursoLivreDaLista(' + c.id + ', document.getElementById(\'select-anexar-livre-' + c.id + '\'))">Anexar</button>' +
+      '</div>';
+    } else {
+      anexarHtml = '<span class="muted small">Gere uma escala primeiro</span>';
+    }
     return '<tr>' +
       '<td>' + escapeHtml(c.nome) + '</td>' +
       '<td><span class="badge">' + escapeHtml(c.categoria) + '</span></td>' +
       '<td>' + formatDateBR(c.data) + '</td>' +
       '<td>' + c.horaInicio + '–' + c.horaFim + '</td>' +
+      '<td style="min-width:220px">' + anexarHtml + '</td>' +
       '<td style="text-align:right;white-space:nowrap">' +
         '<a class="btn btn-sm btn-outline" href="#/cursos-livres/' + c.id + '/editar">Editar</a> ' +
         '<button class="btn btn-sm btn-danger" onclick="AppActions.excluirCursoLivre(' + c.id + ')">Excluir</button>' +
@@ -1095,8 +1126,8 @@ function renderCursosLivresList() {
   app.innerHTML =
     '<div class="toolbar"><h1 style="margin:0">Cursos Livres</h1><a class="btn" href="#/cursos-livres/novo">Novo curso livre</a></div>' +
     '<p class="muted">Turmas avulsas, com data específica, abertas sob demanda.</p>' +
-    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Curso</th><th>Categoria</th><th>Data</th><th>Horário</th><th></th></tr></thead>' +
-    '<tbody>' + (linhas || '<tr><td colspan="5" class="empty">Nenhum curso livre cadastrado ainda.</td></tr>') + '</tbody></table></div></div>';
+    '<div class="card"><div class="table-wrap"><table><thead><tr><th>Curso</th><th>Categoria</th><th>Data</th><th>Horário</th><th>Anexar a uma escala</th><th></th></tr></thead>' +
+    '<tbody>' + (linhas || '<tr><td colspan="6" class="empty">Nenhum curso livre cadastrado ainda.</td></tr>') + '</tbody></table></div></div>';
 }
 
 function renderCursoLivreForm(id) {
