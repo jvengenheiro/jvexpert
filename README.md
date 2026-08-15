@@ -20,7 +20,15 @@ Em ambos os casos, o sistema aloca instrutor automaticamente respeitando:
 
 Depois de gerada, a escala pode ser ajustada manualmente sessão a sessão e exportada em CSV.
 
-## Rodando localmente
+Existem duas formas de usar o sistema — escolha a que fizer mais sentido para você:
+
+- **App web (Flask + SQLite)**: pensada para uso contínuo pela equipe, com importação de CSV/Excel e um
+  banco de dados compartilhável. Requer instalar Python e rodar um servidor (veja abaixo).
+- **Versão standalone (`standalone/index.html`)**: um único arquivo HTML que roda 100% no navegador, sem
+  instalar nada — basta abrir o arquivo. Os dados ficam salvos localmente no navegador (localStorage). Ótima
+  para testar rapidamente ou usar em uma máquina sem Python. Veja `standalone/README.md`.
+
+## Rodando localmente (app web)
 
 ```bash
 python3 -m venv .venv
@@ -62,4 +70,5 @@ app/
   templates/          páginas HTML
 data/                 planilhas de exemplo para importação
 run.py                ponto de entrada da aplicação
+standalone/           versão em arquivo HTML único (sem servidor, dados no navegador)
 ```
